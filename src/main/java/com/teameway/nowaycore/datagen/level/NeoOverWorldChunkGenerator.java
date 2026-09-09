@@ -1,4 +1,4 @@
-package com.teameway.nowaycore.levelgen;
+package com.teameway.nowaycore.datagen.level;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -128,7 +128,7 @@ public class NeoOverWorldChunkGenerator extends ChunkGenerator {
         BlockState platformState = edge ? BORDER : FILL;
 
         for (int y = minBuild; y < maxBuild; ++y) {
-            column[y - minBuild] = y == 64 ? platformState : AIR;
+            column[y - minBuild] = y == PLATFORM_Y ? platformState : AIR;
         }
 
         return new NoiseColumn(minBuild, column);

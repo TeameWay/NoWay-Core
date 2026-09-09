@@ -1,5 +1,10 @@
 package com.teameway.nowaycore;
 
+import com.teameway.nowaycore.datagen.ModDatagen;
+import com.teameway.nowaycore.init.ModBlockEntities;
+import com.teameway.nowaycore.init.ModBlocks;
+import com.teameway.nowaycore.init.ModCreativeTabs;
+import com.teameway.nowaycore.init.ModItems;
 import com.teameway.nowaycore.init.ModLevelGen;
 import com.tterrag.registrate.Registrate;
 import net.minecraft.resources.Identifier;
@@ -17,7 +22,14 @@ public class NoWayCore {
     public static Registrate REGISTRATE = Registrate.create(NoWayCore.MOD_ID);
 
     public NoWayCore(IEventBus eventBus, ModContainer modContainer) {
+        ModCreativeTabs.register();
+        ModItems.register();
+        ModBlocks.register();
+        ModBlockEntities.register();
+
         ModLevelGen.register(eventBus);
+
+        ModDatagen.configureDataGen();
     }
 
     public static Identifier id(String path) {
