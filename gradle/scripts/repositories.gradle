@@ -1,5 +1,6 @@
 repositories {
     mavenLocal()
+    mavenCentral()
 
     maven { // Jade
         name = "Modrinth Maven"
@@ -7,13 +8,19 @@ repositories {
         content {
             includeGroup "maven.modrinth"
         }
-
-        maven { // JEI
-            name = "Jared's maven"
-            url = "https://maven.blamejared.com/"
-            content {
-                includeGroup "mezz.jei"
-            }
+    }
+    maven { // JEI
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+        content {
+            includeGroup "mezz.jei"
         }
+    }
+    maven { // Registrate
+        url "https://maven.gegy.dev/releases"
+    }
+    maven {// LDLib
+        name "firstdarkdev"
+        url "https://maven.firstdarkdev.xyz/snapshots"
     }
 }

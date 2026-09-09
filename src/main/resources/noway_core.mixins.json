@@ -3,6 +3,7 @@
   "package": "com.teameway.nowaycore.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "ae2.ControllerValidatorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

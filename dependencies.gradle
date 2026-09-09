@@ -8,4 +8,14 @@ dependencies {
     // Jade
     compileClasspath(libs.jade)
     runtimeClasspath(libs.jade)
+
+    // Registrate
+    api(libs.registrate)
+    jarJar(libs.registrate)
+
+    // LDLib2
+    implementation(libs.lidlib2)
+
+    // AppEng
+    implementation(libs.appeng)
 }
