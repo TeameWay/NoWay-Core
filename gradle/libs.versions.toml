@@ -1,0 +1,17 @@
+[versions]
+minecraft = "26.1.2"
+neoForge = "26.1.2.75"
+jei = "29.6.2.31"
+jade = "26.1.1+neoforge"
+modDevGradle = "2.0.141"
+lombok = "8.7.1"
+
+[libraries]
+jei-common-api = { group = "mezz.jei", name = "jei-26.1.2-common-api", version.ref = "jei" }
+jei-neoforge-api = { group = "mezz.jei", name = "jei-26.1.2-neoforge-api", version.ref = "jei" }
+jei-neoforge = { group = "mezz.jei", name = "jei-26.1.2-neoforge", version.ref = "jei" }
+jade = { group = "maven.modrinth", name = "jade", version.ref = "jade" }
+
+[plugins]
+modDevGradle = { id = "net.neoforged.moddev", version.ref = "modDevGradle" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombok" }

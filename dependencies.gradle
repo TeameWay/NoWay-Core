@@ -1,0 +1,11 @@
+dependencies {
+    // JEI
+    compileClasspath(libs.jei.common.api) { transitive = false }
+    compileClasspath(libs.jei.neoforge.api) { transitive = false }
+    compileClasspath(libs.jei.neoforge) { transitive = false }
+    runtimeClasspath(libs.jei.neoforge) { transitive = false }
+
+    // Jade
+    compileClasspath(libs.jade)
+    runtimeClasspath(libs.jade)
+}
