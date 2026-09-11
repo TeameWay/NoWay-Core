@@ -2,6 +2,7 @@ package com.teameway.nowaycore.datagen;
 
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.datagen.lang.ModLangGenerator;
+import com.teameway.nowaycore.datagen.model.ItemModelGenerator;
 import com.teameway.nowaycore.datagen.provider.ModDataProvider;
 import com.tterrag.registrate.providers.ProviderType;
 import net.minecraft.data.DataGenerator;
@@ -16,6 +17,7 @@ import static com.teameway.nowaycore.NoWayCore.REGISTRATE;
 public class ModDatagen {
     public static void configureDataGen() {
         REGISTRATE.addDataGenerator(ProviderType.LANG, ModLangGenerator::accept);
+        REGISTRATE.addDataGenerator(ProviderType.ITEM_MODEL, ItemModelGenerator::accept);
     }
 
     @SubscribeEvent

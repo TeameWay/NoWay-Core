@@ -1,3 +1,7 @@
 {
-  "itemGroup.noway_core.main_tab": "Main Tab"
+  "item.noway_core.infinite_color_applicator": "Infinite Color Applicator",
+  "itemGroup.noway_core.main": "Noway Core",
+  "tooltip.noway_core.infinite_color_applicator.1": "Boundless imagination pours forth!",
+  "tooltip.noway_core.infinite_color_applicator.2": "You need a bit of creativity to use it",
+  "tooltip.noway_core.infinite_color_applicator.3": "Visual changes are constantly taking place"
 }

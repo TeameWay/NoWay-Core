@@ -21,14 +21,11 @@ public class LevelEvents {
                 GameRules rules = server.getGameRules();
                 rules.set(GameRules.SPAWN_MONSTERS, false, server);
                 rules.set(GameRules.ADVANCE_TIME, false, server);
-                serverLevel
-                    .dimensionType()
+                rules.set(GameRules.ADVANCE_WEATHER, false, server);
+                serverLevel.dimensionType()
                     .defaultClock()
-                    .ifPresent(
-                        (clock) -> serverLevel
-                            .clockManager()
-                            .moveToTimeMarker(clock, ClockTimeMarkers.NOON)
-                    );
+                    .ifPresent((clock) -> serverLevel.clockManager().moveToTimeMarker(clock, ClockTimeMarkers.NOON));
+                serverLevel.resetWeatherCycle();
             }
         }
     }

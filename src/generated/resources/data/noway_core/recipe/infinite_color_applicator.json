@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": "ae2:terminal",
+    "B": "ae2:matter_ball",
+    "C": "ae2:dense_energy_cell",
+    "D": "ae2:spatial_cell_component_128",
+    "E": "ae2:color_applicator",
+    "F": "ae2:cell_component_256k",
+    "G": "ae2:annihilation_core",
+    "H": "ae2:singularity",
+    "I": "ae2:formation_core"
+  },
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
+  "result": {
+    "id": "noway_core:infinite_color_applicator"
+  }
+}

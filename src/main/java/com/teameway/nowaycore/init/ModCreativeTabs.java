@@ -9,10 +9,12 @@ public class ModCreativeTabs {
     public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MAIN_TAB = REGISTRATE
         .defaultCreativeTab(
             REGISTRATE,
-            "main_tab",
+            "main",
             builder -> builder
+                .icon(ModItems.INFINITE_COLOR_APPLICATOR::asStack)
                 .build()
         )
+        .lang(_ -> "itemGroup.noway_core.main", "Noway Core")
         .register();
 
     public static void register() {
