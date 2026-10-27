@@ -8,6 +8,7 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Item;
 
 import static com.teameway.nowaycore.NoWayCore.REGISTRATE;
 
@@ -32,6 +33,12 @@ public class ModItems {
             .define('I', AEItems.FORMATION_CORE)
             .unlockedBy("has_color_applicator", provider.has(AEItems.COLOR_APPLICATOR))
             .save(provider))
+        .register();
+
+    public static final ItemEntry<Item> CONCRETE_DUST = REGISTRATE.item(
+            "concrete_dust",
+            Item::new
+        )
         .register();
 
     public static void register() {

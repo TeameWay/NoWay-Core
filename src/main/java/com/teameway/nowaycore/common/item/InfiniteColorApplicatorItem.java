@@ -59,9 +59,9 @@ public class InfiniteColorApplicatorItem extends ColorApplicatorItem {
         Consumer<Component> lines,
         TooltipFlag tooltipFlags
     ) {
-        lines.accept(Component.translatable("tooltip.noway_core.infinite_color_applicator.1").withStyle(StyleUtil.colorFromRatio(500)));
-        lines.accept(Component.translatable("tooltip.noway_core.infinite_color_applicator.2").withStyle(StyleUtil.colorFromRatio(400)));
-        lines.accept(Component.translatable("tooltip.noway_core.infinite_color_applicator.3").withStyle(StyleUtil.colorFromRatio(300)));
+        lines.accept(Component.translatable("tooltip.noway_core.infinite_color_applicator.1").withStyle(StyleUtil.colorFromRatio(200)));
+        lines.accept(Component.translatable("tooltip.noway_core.infinite_color_applicator.2").withStyle(StyleUtil.colorFromRatio(275)));
+        lines.accept(Component.translatable("tooltip.noway_core.infinite_color_applicator.3").withStyle(StyleUtil.colorFromRatio(250)));
 
         super.appendHoverText(stack, context, tooltipDisplay, lines, tooltipFlags);
     }

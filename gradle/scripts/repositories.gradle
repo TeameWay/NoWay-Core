@@ -1,4 +1,7 @@
 repositories {
+    flatDir {
+        dir("libs")
+    }
     mavenLocal()
     mavenCentral()
 
@@ -7,6 +10,13 @@ repositories {
         url = "https://api.modrinth.com/maven"
         content {
             includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        name = "CurseForge Maven"
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
         }
     }
     maven { // JEI
@@ -20,7 +30,6 @@ repositories {
         url "https://maven.gegy.dev/releases"
     }
     maven {// LDLib
-        name "firstdarkdev"
         url "https://maven.firstdarkdev.xyz/snapshots"
     }
 }

@@ -10,8 +10,8 @@ dependencies {
     runtimeClasspath(libs.jade)
 
     // Registrate
-    api(libs.registrate)
-    jarJar(libs.registrate)
+    api(name: "Registrate-MC26.3-1.6.8")
+    jarJar(name: "Registrate-MC26.3-1.6.8")
 
     // LDLib2
     implementation(libs.lidlib2)

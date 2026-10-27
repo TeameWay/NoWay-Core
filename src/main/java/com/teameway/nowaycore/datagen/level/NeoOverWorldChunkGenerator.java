@@ -22,9 +22,12 @@ import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -40,8 +43,8 @@ public class NeoOverWorldChunkGenerator extends ChunkGenerator {
 
     static {
         AIR = Blocks.AIR.defaultBlockState();
-        BORDER = Blocks.GRAY_CONCRETE.defaultBlockState();
-        FILL = Blocks.WHITE_CONCRETE.defaultBlockState();
+        BORDER = Blocks.CONCRETE.gray().defaultBlockState();
+        FILL = Blocks.CONCRETE.white().defaultBlockState();
         CODEC = RecordCodecBuilder.mapCodec((inst) -> inst.group(RegistryOps.retrieveElement(Biomes.PLAINS))
             .apply(inst, inst.stable(NeoOverWorldChunkGenerator::new)));
     }
@@ -61,28 +64,13 @@ public class NeoOverWorldChunkGenerator extends ChunkGenerator {
         RandomState randomState,
         long legacyLevelSeed
     ) {
-        return ChunkGeneratorStructureState.createForFlat(randomState, legacyLevelSeed, this.biomeSource, Stream.of());
-    }
-
-    @Override
-    public void applyCarvers(
-        WorldGenRegion worldGenRegion,
-        long l,
-        RandomState randomState,
-        BiomeManager biomeManager,
-        StructureManager structureManager,
-        ChunkAccess chunkAccess
-    ) {
-    }
-
-    @Override
-    public void buildSurface(
-        WorldGenRegion worldGenRegion,
-        StructureManager structureManager,
-        RandomState randomState,
-        ChunkAccess chunkAccess
-    ) {
-        this.fillPlatform(chunkAccess);
+        return ChunkGeneratorStructureState.createForFlat(
+            randomState,
+            legacyLevelSeed,
+            this.getOrigin(randomState),
+            this.biomeSource,
+            Stream.of()
+        );
     }
 
     @Override
@@ -95,12 +83,16 @@ public class NeoOverWorldChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(
+    public CompletableFuture<ChunkAccess> buildTerrain(
+        ChunkAccess chunkAccess,
         Blender blender,
         RandomState randomState,
         StructureManager structureManager,
-        ChunkAccess chunkAccess
+        BiomeManager biomeManager,
+        @Nullable WorldGenRegion worldGenRegion,
+        Set<Holder<Biome>> set
     ) {
+        this.fillPlatform(chunkAccess);
         return CompletableFuture.completedFuture(chunkAccess);
     }
 
@@ -135,7 +127,8 @@ public class NeoOverWorldChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void addDebugScreenInfo(List<String> list, RandomState randomState, BlockPos blockPos) {
+    public void addDebugScreenInfo(List<String> list, RandomState randomState, BlockPos blockPos, SamplerContext samplerContext) {
+
     }
 
     private void fillPlatform(ChunkAccess chunk) {
