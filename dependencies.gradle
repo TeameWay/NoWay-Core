@@ -1,8 +1,8 @@
 dependencies {
 
     // AnvilLib
-    implementation(libs.anvillib)
     jarJar(libs.anvillib)
+    api(libs.anvillib)
 
     // JEI
     compileClasspath(libs.jei.common.api) { transitive = false }
