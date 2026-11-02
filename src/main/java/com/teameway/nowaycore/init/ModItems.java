@@ -4,21 +4,21 @@ import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import appeng.core.definitions.AEParts;
 import com.teameway.nowaycore.common.item.InfiniteColorApplicatorItem;
-import com.tterrag.registrate.util.entry.ItemEntry;
-import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
+import dev.anvilcraft.lib.v2.registrum.util.entry.ItemEntry;
+import dev.anvilcraft.lib.v2.util.nullness.NonNullBiConsumer;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Item;
 
-import static com.teameway.nowaycore.NoWayCore.REGISTRATE;
+import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 
 public class ModItems {
-    public static final ItemEntry<InfiniteColorApplicatorItem> INFINITE_COLOR_APPLICATOR = REGISTRATE.item(
+    public static final ItemEntry<InfiniteColorApplicatorItem> INFINITE_COLOR_APPLICATOR = REGISTRUM.item(
             "infinite_color_applicator",
             InfiniteColorApplicatorItem::new
         )
         .model(NonNullBiConsumer::noop)
-        .recipe((context, provider) -> ShapedRecipeBuilder.shaped(provider.itemLookup(), RecipeCategory.TOOLS, context.get())
+        .recipe((context, provider) -> ShapedRecipeBuilder.shaped(provider.getItems(), RecipeCategory.TOOLS, context.get())
             .pattern("ABC")
             .pattern("DEF")
             .pattern("GHI")
@@ -35,11 +35,10 @@ public class ModItems {
             .save(provider))
         .register();
 
-    public static final ItemEntry<Item> CONCRETE_DUST = REGISTRATE.item(
-            "concrete_dust",
-            Item::new
-        )
-        .register();
+    public static final ItemEntry<Item> CONCRETE_DUST = REGISTRUM.item(
+        "concrete_dust",
+        Item::new
+    ).register();
 
     public static void register() {
     }

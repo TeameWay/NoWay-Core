@@ -1,9 +1,9 @@
 package com.teameway.nowaycore.datagen.recipe;
 
-import com.tterrag.registrate.providers.generators.RegistrateRecipeProvider;
+import dev.anvilcraft.lib.v2.registrum.providers.generators.RegistrumRecipeProvider;
 
 public class ModRecipeGenerator {
-    public static void accept(RegistrateRecipeProvider provider) {
+    public static void accept(RegistrumRecipeProvider provider) {
 
     }
 }

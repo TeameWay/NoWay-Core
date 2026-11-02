@@ -6,7 +6,7 @@ import com.teameway.nowaycore.init.ModBlocks;
 import com.teameway.nowaycore.init.ModCreativeTabs;
 import com.teameway.nowaycore.init.ModItems;
 import com.teameway.nowaycore.init.ModLevelGen;
-import com.tterrag.registrate.Registrate;
+import dev.anvilcraft.lib.v2.registrum.Registrum;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -19,7 +19,7 @@ public class NoWayCore {
     public static final String MOD_ID = "noway_core";
     public static final String MOD_NAME = "Noway Core";
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
-    public static Registrate REGISTRATE = Registrate.create(NoWayCore.MOD_ID);
+    public static Registrum REGISTRUM = Registrum.create(NoWayCore.MOD_ID);
 
     public NoWayCore(IEventBus eventBus, ModContainer modContainer) {
         ModCreativeTabs.register();

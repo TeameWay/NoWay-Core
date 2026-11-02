@@ -5,7 +5,7 @@ import com.teameway.nowaycore.datagen.lang.ModLangGenerator;
 import com.teameway.nowaycore.datagen.model.ItemModelGenerator;
 import com.teameway.nowaycore.datagen.provider.ModDataProvider;
 import com.teameway.nowaycore.datagen.recipe.ModRecipeGenerator;
-import com.tterrag.registrate.providers.ProviderType;
+import dev.anvilcraft.lib.v2.registrum.providers.ProviderType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -15,14 +15,14 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.teameway.nowaycore.NoWayCore.REGISTRATE;
+import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
 public class ModDatagen {
     public static void configureDataGen() {
-        REGISTRATE.addDataGenerator(ProviderType.LANG, ModLangGenerator::accept);
-        REGISTRATE.addDataGenerator(ProviderType.RECIPE, ModRecipeGenerator::accept);
-        REGISTRATE.addDataGenerator(ProviderType.ITEM_MODEL, ItemModelGenerator::accept);
+        REGISTRUM.addDataGenerator(ProviderType.LANG, ModLangGenerator::accept);
+        REGISTRUM.addDataGenerator(ProviderType.RECIPE, ModRecipeGenerator::accept);
+        REGISTRUM.addDataGenerator(ProviderType.ITEM_MODEL, ItemModelGenerator::accept);
     }
 
     @SubscribeEvent

@@ -12,11 +12,6 @@ neoForge {
 
         client {
             client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        clientMSA {
-            client()
             devLogin = true
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }

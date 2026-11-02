@@ -1,7 +1,4 @@
 repositories {
-    flatDir {
-        dir("libs")
-    }
     mavenLocal()
     mavenCentral()
 
@@ -31,5 +28,9 @@ repositories {
     }
     maven {// LDLib
         url "https://maven.firstdarkdev.xyz/snapshots"
+    }
+
+    maven {// Cj
+        url "https://server.cjsah.net:1002/maven/"
     }
 }

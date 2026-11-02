@@ -2,11 +2,11 @@ package com.teameway.nowaycore.datagen.model;
 
 import appeng.client.item.ColorApplicatorItemModel;
 import com.teameway.nowaycore.init.ModItems;
-import com.tterrag.registrate.providers.generators.RegistrateItemModelGenerator;
+import dev.anvilcraft.lib.v2.registrum.providers.generators.RegistrumItemModelGenerator;
 import net.minecraft.resources.Identifier;
 
 public class ItemModelGenerator {
-    public static void accept(RegistrateItemModelGenerator generator) {
+    public static void accept(RegistrumItemModelGenerator generator) {
         generator.itemModelOutput.accept(
             ModItems.INFINITE_COLOR_APPLICATOR.get(),
             new ColorApplicatorItemModel.Unbaked(

@@ -1,9 +1,9 @@
 package com.teameway.nowaycore.datagen.lang;
 
-import com.tterrag.registrate.providers.RegistrateLangProvider;
+import dev.anvilcraft.lib.v2.registrum.providers.RegistrumLangProvider;
 
 public class ModLangGenerator {
-    public static void accept(RegistrateLangProvider provider) {
+    public static void accept(RegistrumLangProvider provider) {
         TooltipLangProvider.init(provider);
     }
 }

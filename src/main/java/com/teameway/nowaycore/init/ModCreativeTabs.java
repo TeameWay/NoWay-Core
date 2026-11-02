@@ -1,19 +1,13 @@
 package com.teameway.nowaycore.init;
 
-import com.tterrag.registrate.util.entry.RegistryEntry;
+import dev.anvilcraft.lib.v2.registrum.util.entry.RegistryEntry;
 import net.minecraft.world.item.CreativeModeTab;
 
-import static com.teameway.nowaycore.NoWayCore.REGISTRATE;
+import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 
 public class ModCreativeTabs {
-    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MAIN_TAB = REGISTRATE
-        .defaultCreativeTab(
-            REGISTRATE,
-            "main",
-            builder -> builder
-                .icon(ModItems.INFINITE_COLOR_APPLICATOR::asStack)
-                .build()
-        )
+    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MAIN_TAB = REGISTRUM
+        .creativeTab("main", ModItems.INFINITE_COLOR_APPLICATOR)
         .lang(_ -> "itemGroup.noway_core.main", "Noway Core")
         .register();
 
