@@ -24,6 +24,11 @@ public class ModMultiblockDefinitions {
         .add(new Vec3i(1, 0, 0), Blocks.GOLD_BLOCK)
         .add(new Vec3i(0, 0, -1), Blocks.GOLD_BLOCK)
         .add(new Vec3i(0, 0, 1), Blocks.GOLD_BLOCK)
+        // 四角：输入总线 / 输出总线 / 输入仓 / 并行仓
+        .add(new Vec3i(-1, 0, -1), ModMultiblockPorts.ITEM_INPUT.get())
+        .add(new Vec3i(1, 0, -1), ModMultiblockPorts.ITEM_OUTPUT.get())
+        .add(new Vec3i(-1, 0, 1), ModMultiblockPorts.FLUID_INPUT.get())
+        .add(new Vec3i(1, 0, 1), ModMultiblockPorts.PARALLEL.get())
         .build();
 
 }

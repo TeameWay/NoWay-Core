@@ -6,9 +6,9 @@
       "AAA"
     ],
     [
-      " B ",
+      "CBD",
       "B0B",
-      " B "
+      "EBF"
     ]
   ],
   "mapping": {
@@ -20,6 +20,18 @@
     },
     "B": {
       "blocks": "minecraft:gold_block"
+    },
+    "C": {
+      "blocks": "noway_core:item_input_port"
+    },
+    "D": {
+      "blocks": "noway_core:item_output_port"
+    },
+    "E": {
+      "blocks": "noway_core:fluid_input_port"
+    },
+    "F": {
+      "blocks": "noway_core:parallel_port"
     }
   }
 }

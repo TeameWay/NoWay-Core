@@ -1,0 +1,25 @@
+{
+  "type": "noway_core:multiblock",
+  "machine": "noway_core:simple_processor",
+  "variants": [
+    "noway_core:cooled"
+  ],
+  "time": 60,
+  "priority": 1,
+  "inputs": [
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:iron_ingot",
+        "count": 2
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "type": "item",
+      "item": "minecraft:iron_block",
+      "count": 2
+    }
+  ]
+}

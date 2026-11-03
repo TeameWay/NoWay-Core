@@ -32,12 +32,13 @@ public final class RecipeMatcher {
      * @param ledger    预留账本
      * @return 配方，找不到返回 {@code null}
      */
-    public static @Nullable CompiledRecipe find(
+    public static @Nullable Match findBest(
         MultiblockRecipeIndex index,
         Identifier machine,
         Set<Identifier> variants,
         MachineResources resources,
-        ReservationLedger ledger
+        ReservationLedger ledger,
+        int maxBatch
     ) {
         TypeIndex typeIndex = index.type(machine);
         if (typeIndex == null) {
@@ -46,8 +47,11 @@ public final class RecipeMatcher {
         BitSet candidates = typeIndex.candidates(resources.keys(), variants);
         for (int bit = candidates.nextSetBit(0); bit >= 0; bit = candidates.nextSetBit(bit + 1)) {
             CompiledRecipe recipe = typeIndex.recipes().get(bit);
-            if (plan(recipe, resources, ledger) != null) {
-                return recipe;
+            for (int repeats = Math.max(1, maxBatch); repeats >= 1; repeats--) {
+                ResourceAllocation allocation = plan(recipe, resources, ledger, repeats);
+                if (allocation != null) {
+                    return new Match(recipe, repeats, allocation);
+                }
             }
         }
         return null;
@@ -66,6 +70,24 @@ public final class RecipeMatcher {
         MachineResources resources,
         ReservationLedger ledger
     ) {
+        return plan(recipe, resources, ledger, 1);
+    }
+
+    /**
+     * 计算指定并行倍数的输入分配
+     *
+     * @param recipe    配方
+     * @param resources 输入快照
+     * @param ledger    预留账本
+     * @param repeats   并行倍数
+     * @return 分配结果；材料不足返回 {@code null}
+     */
+    public static @Nullable ResourceAllocation plan(
+        CompiledRecipe recipe,
+        MachineResources resources,
+        ReservationLedger ledger,
+        int repeats
+    ) {
         long[] freeItems = resources.freeItemAmounts(ledger);
         long[] freeFluids = resources.freeFluidAmounts(ledger);
         long freeEnergy = resources.freeEnergy(ledger);
@@ -80,7 +102,7 @@ public final class RecipeMatcher {
             }
             switch (ingredient) {
                 case ResourceIngredient.Items items -> {
-                    long remaining = items.predicate().count();
+                    long remaining = (long) items.predicate().count() * repeats;
                     for (int slot = 0; slot < freeItems.length && remaining > 0; slot++) {
                         if (freeItems[slot] <= 0 || !matches(resources, slot, items)) {
                             continue;
@@ -95,7 +117,7 @@ public final class RecipeMatcher {
                     }
                 }
                 case ResourceIngredient.Fluids fluids -> {
-                    long remaining = fluids.ingredient().amount();
+                    long remaining = (long) fluids.ingredient().amount() * repeats;
                     for (int slot = 0; slot < freeFluids.length && remaining > 0; slot++) {
                         if (freeFluids[slot] <= 0 || !matches(resources, slot, fluids)) {
                             continue;
@@ -110,11 +132,12 @@ public final class RecipeMatcher {
                     }
                 }
                 case ResourceIngredient.Energy energy -> {
-                    if (freeEnergy < energy.amount()) {
+                    long needed = energy.amount() * repeats;
+                    if (freeEnergy < needed) {
                         return null;
                     }
-                    freeEnergy -= energy.amount();
-                    takeEnergy += energy.amount();
+                    freeEnergy -= needed;
+                    takeEnergy += needed;
                 }
             }
         }
@@ -152,6 +175,16 @@ public final class RecipeMatcher {
         }
 
         return new ResourceAllocation(takeItems, takeFluids, takeEnergy);
+    }
+
+    /**
+     * 匹配结果
+     *
+     * @param recipe     配方
+     * @param batch      并行倍数
+     * @param allocation 输入分配
+     */
+    public record Match(CompiledRecipe recipe, int batch, ResourceAllocation allocation) {
     }
 
     private static boolean matches(MachineResources resources, int slot, ResourceIngredient.Items items) {

@@ -1,6 +1,7 @@
 package com.teameway.nowaycore;
 
 import com.teameway.nowaycore.common.multiblock.MultiblockMachine;
+import com.teameway.nowaycore.common.multiblock.MultiblockType;
 import com.teameway.nowaycore.init.ModRegistries;
 import dev.anvilcraft.lib.v2.multiblock.dynamic.controller.IController;
 import dev.anvilcraft.lib.v2.registrum.AbstractRegistrum;
@@ -75,6 +76,20 @@ public class NowayRegistrum extends AbstractRegistrum<NowayRegistrum> {
             ModRegistries.MULTIBLOCK_CONTROLLERS,
             () -> factory.apply(block.get(), definitionId)
         );
+    }
+
+    /**
+     * 注册一个多方块机器类型
+     *
+     * @param name    类型名，同时也是定义 tag 的路径
+     * @param factory 类型工厂
+     * @return 构建器
+     */
+    public NoConfigBuilder<MultiblockType, MultiblockType, NowayRegistrum> multiblockType(
+        String name,
+        NonNullSupplier<MultiblockType> factory
+    ) {
+        return this.generic(name, ModRegistries.MULTIBLOCK_TYPES, factory);
     }
 
     /**

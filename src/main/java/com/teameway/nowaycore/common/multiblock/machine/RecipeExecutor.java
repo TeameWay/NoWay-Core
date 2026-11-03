@@ -35,6 +35,7 @@ public final class RecipeExecutor {
      * @param resources  输入快照
      * @param allocation 匹配阶段给出的输入分配
      * @param outputs    产出列表
+     * @param batch      本次执行的并行倍数
      * @param random     随机源（用于概率产出）
      * @return 执行结果
      */
@@ -44,6 +45,7 @@ public final class RecipeExecutor {
         MachineResources resources,
         ResourceAllocation allocation,
         List<ResourceOutput> outputs,
+        int batch,
         RandomSource random
     ) {
         LootContext context = new LootContext.Builder(
@@ -54,7 +56,7 @@ public final class RecipeExecutor {
             if (!consumeInputs(transaction, resources, allocation)) {
                 return CraftResult.MISSING_INPUT;
             }
-            if (!insertOutputs(transaction, table, outputs, context, random)) {
+            if (!insertOutputs(transaction, table, outputs, context, random, Math.max(1, batch))) {
                 return CraftResult.OUTPUT_BLOCKED;
             }
             transaction.commit();
@@ -103,26 +105,27 @@ public final class RecipeExecutor {
         MultiblockPortTable table,
         List<ResourceOutput> outputs,
         LootContext context,
-        RandomSource random
+        RandomSource random,
+        int batch
     ) {
         for (ResourceOutput output : outputs) {
             if (random.nextFloat() >= output.chance()) {
                 continue;
             }
-            int amount = output.amount().getInt(context);
+            long amount = (long) output.amount().getInt(context) * batch;
             if (amount <= 0) {
                 continue;
             }
             switch (output) {
                 case ResourceOutput.Items items -> {
                     ItemResource resource = ItemResource.of(items.template());
-                    if (table.itemOutputs().insert(resource, amount, transaction) != amount) {
+                    if (table.itemOutputs().insert(resource, (int) Math.min(amount, Integer.MAX_VALUE), transaction) != amount) {
                         return false;
                     }
                 }
                 case ResourceOutput.Fluids fluids -> {
                     FluidResource resource = FluidResource.of(fluids.fluid());
-                    if (table.fluidOutputs().insert(resource, amount, transaction) != amount) {
+                    if (table.fluidOutputs().insert(resource, (int) Math.min(amount, Integer.MAX_VALUE), transaction) != amount) {
                         return false;
                     }
                 }

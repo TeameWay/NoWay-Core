@@ -2,6 +2,7 @@ package com.teameway.nowaycore.init;
 
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.common.multiblock.MultiblockMachine;
+import com.teameway.nowaycore.common.multiblock.MultiblockType;
 import dev.anvilcraft.lib.v2.multiblock.dynamic.controller.IController;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -25,6 +26,12 @@ public final class ModRegistries {
         ResourceKey.createRegistryKey(NoWayCore.id("multiblock_controllers"));
 
     /**
+     * 多方块机器类型
+     */
+    public static final ResourceKey<Registry<MultiblockType>> MULTIBLOCK_TYPES =
+        ResourceKey.createRegistryKey(NoWayCore.id("multiblock_types"));
+
+    /**
      * 多方块机器声明
      */
     public static final ResourceKey<Registry<MultiblockMachine>> MULTIBLOCKS =
@@ -44,5 +51,6 @@ public final class ModRegistries {
     public static void onNewRegistry(NewRegistryEvent event) {
         event.create(new RegistryBuilder<>(MULTIBLOCK_CONTROLLERS));
         event.create(new RegistryBuilder<>(MULTIBLOCKS));
+        event.create(new RegistryBuilder<>(MULTIBLOCK_TYPES));
     }
 }

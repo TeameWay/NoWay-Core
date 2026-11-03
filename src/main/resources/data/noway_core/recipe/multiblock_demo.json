@@ -1,7 +1,7 @@
 {
   "type": "noway_core:multiblock",
   "machine": "noway_core:simple_processor",
-  "time": 200,
+  "time": 100,
   "priority": 0,
   "inputs": [
     {
@@ -10,17 +10,6 @@
         "items": "minecraft:iron_ingot",
         "count": 2
       }
-    },
-    {
-      "type": "fluid",
-      "fluid": {
-        "ingredient": "minecraft:water",
-        "amount": 500
-      }
-    },
-    {
-      "type": "energy",
-      "amount": 1000
     }
   ],
   "outputs": [
@@ -28,12 +17,6 @@
       "type": "item",
       "item": "minecraft:iron_block",
       "count": 1
-    },
-    {
-      "type": "item",
-      "item": "minecraft:gold_nugget",
-      "count": 3,
-      "chance": 0.25
     }
   ]
 }

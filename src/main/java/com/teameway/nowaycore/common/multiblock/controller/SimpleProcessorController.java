@@ -32,13 +32,18 @@ public class SimpleProcessorController extends SimpleController {
             16, 0.4, 0.4, 0.4, 0.02
         );
         serverLevel.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        if (serverLevel.getBlockEntity(pos) instanceof ControllerBlockEntity controller) {
+            controller.form(serverLevel, state);
+        }
     }
 
     @Override
     public void onUnformed(Level level, MultiblockState state) {
         if (!(level instanceof ServerLevel serverLevel)) return;
-        serverLevel.playSound(
-            null, state.getControllerPos(), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 1.0F, 1.0F
-        );
+        BlockPos pos = state.getControllerPos();
+        serverLevel.playSound(null, pos, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        if (serverLevel.getBlockEntity(pos) instanceof ControllerBlockEntity controller) {
+            controller.unform();
+        }
     }
 }
