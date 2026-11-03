@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "noway_core:block/fluid_output_port"
+  }
+}

@@ -5,6 +5,8 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teameway.nowaycore.init.ModRecipeSerializers;
 import com.teameway.nowaycore.init.ModRecipeTypes;
+import com.teameway.nowaycore.resource.ResourceIngredient;
+import com.teameway.nowaycore.resource.ResourceOutput;
 import dev.anvilcraft.lib.v2.codec.StreamCodecUtil;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;

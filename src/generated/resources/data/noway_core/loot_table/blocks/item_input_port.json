@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "noway_core:item_input_port"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "noway_core:blocks/item_input_port"
+}

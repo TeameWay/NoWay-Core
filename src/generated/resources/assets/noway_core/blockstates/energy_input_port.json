@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "noway_core:block/energy_input_port"
+    }
+  }
+}
