@@ -35,10 +35,7 @@ public class ModItems {
             .save(provider))
         .register();
 
-    public static final ItemEntry<Item> CONCRETE_DUST = REGISTRUM.item(
-        "concrete_dust",
-        Item::new
-    ).register();
+    public static final ItemEntry<Item> CONCRETE_DUST = REGISTRUM.item("concrete_dust", Item::new).register();
 
     public static void register() {
     }

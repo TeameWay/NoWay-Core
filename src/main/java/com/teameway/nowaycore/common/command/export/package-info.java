@@ -1,4 +1,4 @@
 @NullMarked
-package com.teameway.nowaycore.client;
+package com.teameway.nowaycore.common.command.export;
 
 import org.jspecify.annotations.NullMarked;
