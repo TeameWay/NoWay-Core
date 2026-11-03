@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.material.Fluid;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public final class MultiblockRecipeIndex {
     private static final AtomicLong VERSION = new AtomicLong();
 
-    private static volatile MultiblockRecipeIndex current;
+    private static volatile @Nullable MultiblockRecipeIndex current;
 
     private final long version;
     private final Map<Identifier, TypeIndex> types;
@@ -46,7 +47,7 @@ public final class MultiblockRecipeIndex {
     /**
      * @return 当前索引，未构建时返回 {@code null}
      */
-    public static MultiblockRecipeIndex current() {
+    public static @Nullable MultiblockRecipeIndex current() {
         return current;
     }
 
@@ -130,7 +131,7 @@ public final class MultiblockRecipeIndex {
      * @param machine 机器类型 ID
      * @return 索引，不存在时返回 {@code null}
      */
-    public TypeIndex type(Identifier machine) {
+    public @Nullable TypeIndex type(Identifier machine) {
         return this.types.get(machine);
     }
 
