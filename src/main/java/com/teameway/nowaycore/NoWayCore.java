@@ -4,9 +4,11 @@ import com.teameway.nowaycore.datagen.ModDatagen;
 import com.teameway.nowaycore.init.ModCreativeTabs;
 import com.teameway.nowaycore.init.ModItems;
 import com.teameway.nowaycore.init.ModLevelGen;
+import com.teameway.nowaycore.init.ModRecipeSerializers;
+import com.teameway.nowaycore.init.ModRecipeTypes;
 import com.teameway.nowaycore.init.block.ModBlockEntities;
 import com.teameway.nowaycore.init.block.ModBlocks;
-import com.teameway.nowaycore.init.multiblock.ModControllers;
+import com.teameway.nowaycore.init.multiblock.ModMultiblockControllers;
 import com.teameway.nowaycore.init.multiblock.ModMultiblockMachines;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
@@ -27,12 +29,13 @@ public class NoWayCore {
         ModItems.register();
         ModBlocks.register();
         ModBlockEntities.register();
+        ModRecipeTypes.register(eventBus);
+        ModRecipeSerializers.register(eventBus);
 
-        ModControllers.register();
+        ModMultiblockControllers.register();
         ModMultiblockMachines.register();
 
         ModLevelGen.register(eventBus);
-
         ModDatagen.configureDataGen();
     }
 

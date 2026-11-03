@@ -7,7 +7,7 @@ import dev.anvilcraft.lib.v2.registrum.util.entry.RegistryEntry;
 
 import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 
-public class ModControllers {
+public class ModMultiblockControllers {
     /**
      * 简易处理器控制器
      */

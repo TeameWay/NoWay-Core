@@ -23,7 +23,7 @@ public final class ModMultiblockMachines {
 
     public static final RegistryEntry<MultiblockMachine, MultiblockMachine> SIMPLE_PROCESSOR = REGISTRUM.multiblock(
         "simple_processor",
-        () -> MultiblockMachine.builder(ModControllers.SIMPLE_PROCESSOR_CONTROLLER)
+        () -> MultiblockMachine.builder(ModMultiblockControllers.SIMPLE_PROCESSOR_CONTROLLER)
             .definition(() -> ModMultiblockDefinitions.SIMPLE_PROCESSOR)
             .build()
     ).register();
