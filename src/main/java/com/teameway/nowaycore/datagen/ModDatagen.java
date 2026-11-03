@@ -12,6 +12,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.data.loading.DatagenModLoader;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -20,6 +21,9 @@ import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
 public class ModDatagen {
     public static void configureDataGen() {
+        if (!DatagenModLoader.isRunningDataGen()) {
+            return;
+        }
         REGISTRUM.addDataGenerator(ProviderType.LANG, ModLangGenerator::accept);
         REGISTRUM.addDataGenerator(ProviderType.RECIPE, ModRecipeGenerator::accept);
         REGISTRUM.addDataGenerator(ProviderType.ITEM_MODEL, ItemModelGenerator::accept);
