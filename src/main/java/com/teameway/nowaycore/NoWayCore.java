@@ -6,6 +6,8 @@ import com.teameway.nowaycore.init.ModItems;
 import com.teameway.nowaycore.init.ModLevelGen;
 import com.teameway.nowaycore.init.block.ModBlockEntities;
 import com.teameway.nowaycore.init.block.ModBlocks;
+import com.teameway.nowaycore.init.multiblock.ModControllers;
+import com.teameway.nowaycore.init.multiblock.ModMultiblockMachines;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -25,6 +27,9 @@ public class NoWayCore {
         ModItems.register();
         ModBlocks.register();
         ModBlockEntities.register();
+
+        ModControllers.register();
+        ModMultiblockMachines.register();
 
         ModLevelGen.register(eventBus);
 

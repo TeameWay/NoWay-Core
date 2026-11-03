@@ -16,4 +16,7 @@ public class ModControllers {
         ModBlocks.SIMPLE_CONTROLLER,
         SimpleProcessorController::new
     ).register();
+
+    public static void register() {
+    }
 }

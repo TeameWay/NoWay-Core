@@ -45,4 +45,7 @@ public final class ModMultiblockMachines {
             ControllerRecord.register(controller);
         }));
     }
+
+    public static void register() {
+    }
 }
