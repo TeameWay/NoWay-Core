@@ -1,6 +1,8 @@
 {
+  "block.noway_core.simple_controller": "Simple Controller",
   "item.noway_core.concrete_dust": "Concrete Dust",
   "item.noway_core.infinite_color_applicator": "Infinite Color Applicator",
+  "item.noway_core.simple_controller": "Simple Controller",
   "itemGroup.noway_core.main": "Noway Core",
   "tooltip.noway_core.infinite_color_applicator.1": "Boundless imagination pours forth!",
   "tooltip.noway_core.infinite_color_applicator.2": "You need a bit of creativity to use it",

@@ -1,0 +1,25 @@
+{
+  "grid": [
+    [
+      "AAA",
+      "AAA",
+      "AAA"
+    ],
+    [
+      " B ",
+      "B0B",
+      " B "
+    ]
+  ],
+  "mapping": {
+    "0": {
+      "blocks": "noway_core:simple_controller"
+    },
+    "A": {
+      "blocks": "minecraft:iron_block"
+    },
+    "B": {
+      "blocks": "minecraft:gold_block"
+    }
+  }
+}

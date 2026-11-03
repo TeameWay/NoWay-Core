@@ -1,12 +1,11 @@
 package com.teameway.nowaycore;
 
 import com.teameway.nowaycore.datagen.ModDatagen;
-import com.teameway.nowaycore.init.ModBlockEntities;
-import com.teameway.nowaycore.init.ModBlocks;
 import com.teameway.nowaycore.init.ModCreativeTabs;
 import com.teameway.nowaycore.init.ModItems;
 import com.teameway.nowaycore.init.ModLevelGen;
-import dev.anvilcraft.lib.v2.registrum.Registrum;
+import com.teameway.nowaycore.init.block.ModBlockEntities;
+import com.teameway.nowaycore.init.block.ModBlocks;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -19,7 +18,7 @@ public class NoWayCore {
     public static final String MOD_ID = "noway_core";
     public static final String MOD_NAME = "Noway Core";
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
-    public static Registrum REGISTRUM = Registrum.create(NoWayCore.MOD_ID);
+    public static NowayRegistrum REGISTRUM = NowayRegistrum.create(NoWayCore.MOD_ID);
 
     public NoWayCore(IEventBus eventBus, ModContainer modContainer) {
         ModCreativeTabs.register();

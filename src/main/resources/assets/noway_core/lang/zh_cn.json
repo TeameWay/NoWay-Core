@@ -4,5 +4,6 @@
   "tooltip.noway_core.infinite_color_applicator.1": "无穷的想象力喷涌而出！",
   "tooltip.noway_core.infinite_color_applicator.2": "你需要一点创意使用它",
   "tooltip.noway_core.infinite_color_applicator.3": "视觉层面的变化正在不断发生",
-  "item.noway_core.concrete_dust": "混凝土粉尘"
+  "item.noway_core.concrete_dust": "混凝土粉尘",
+  "block.noway_core.simple_controller": "简易处理器"
 }

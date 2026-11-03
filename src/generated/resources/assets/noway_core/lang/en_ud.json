@@ -1,8 +1,10 @@
 {
+  "block.noway_core.simple_controller": "ɹǝꞁꞁoɹʇuoƆ ǝꞁdɯᴉS",
   "item.noway_core.concrete_dust": "ʇsnᗡ ǝʇǝɹɔuoƆ",
-  "item.noway_core.infinite_color_applicator": "ɹoʇɐɔıןddⱯ ɹoןoƆ ǝʇıuıɟuI",
+  "item.noway_core.infinite_color_applicator": "ɹoʇɐɔᴉꞁddⱯ ɹoꞁoƆ ǝʇᴉuᴉɟuI",
+  "item.noway_core.simple_controller": "ɹǝꞁꞁoɹʇuoƆ ǝꞁdɯᴉS",
   "itemGroup.noway_core.main": "ǝɹoƆ ʎɐʍoN",
-  "tooltip.noway_core.infinite_color_applicator.1": "¡ɥʇɹoɟ sɹnod uoıʇɐuıbɐɯı ssǝןpunoᗺ",
-  "tooltip.noway_core.infinite_color_applicator.2": "ʇı ǝsn oʇ ʎʇıʌıʇɐǝɹɔ ɟo ʇıq ɐ pǝǝu noʎ",
-  "tooltip.noway_core.infinite_color_applicator.3": "ǝɔɐןd buıʞɐʇ ʎןʇuɐʇsuoɔ ǝɹɐ sǝbuɐɥɔ ןɐnsıΛ"
+  "tooltip.noway_core.infinite_color_applicator.1": "¡ɥʇɹoɟ sɹnod uoᴉʇɐuᴉᵷɐɯᴉ ssǝꞁpunoᗺ",
+  "tooltip.noway_core.infinite_color_applicator.2": "ʇᴉ ǝsn oʇ ʎʇᴉʌᴉʇɐǝɹɔ ɟo ʇᴉq ɐ pǝǝu no⅄",
+  "tooltip.noway_core.infinite_color_applicator.3": "ǝɔɐꞁd ᵷuᴉʞɐʇ ʎꞁʇuɐʇsuoɔ ǝɹɐ sǝᵷuɐɥɔ ꞁɐnsᴉɅ"
 }
