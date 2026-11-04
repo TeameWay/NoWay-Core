@@ -1,0 +1,26 @@
+{
+  "type": "noway_core:multiblock",
+  "machine": "noway_core:simple_processor",
+  "time": 60,
+  "priority": 4,
+  "inputs": [
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:redstone",
+        "count": 8
+      }
+    },
+    {
+      "type": "energy",
+      "amount": 20000
+    }
+  ],
+  "outputs": [
+    {
+      "type": "item",
+      "item": "minecraft:redstone_block",
+      "count": 1
+    }
+  ]
+}

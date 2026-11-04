@@ -1,0 +1,40 @@
+{
+  "type": "noway_core:multiblock",
+  "machine": "noway_core:simple_processor",
+  "time": 40,
+  "priority": 5,
+  "inputs": [
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:sand",
+        "count": 4
+      }
+    },
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:gravel",
+        "count": 4
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "type": "item",
+      "item": "minecraft:glass",
+      "count": 2
+    },
+    {
+      "type": "item",
+      "item": "minecraft:flint",
+      "count": 1,
+      "chance": 0.5
+    },
+    {
+      "type": "fluid",
+      "fluid": "minecraft:water",
+      "amount": 500
+    }
+  ]
+}

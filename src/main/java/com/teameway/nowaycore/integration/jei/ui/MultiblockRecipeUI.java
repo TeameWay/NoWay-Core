@@ -19,8 +19,11 @@ import java.util.Locale;
 /**
  * 配方页
  *
- * <p>排版为三段：中部输入列、箭头、输出列，底部三行数值。两列紧贴箭头，箭头中心固定落在
- * 面板水平中线上，因此输入输出天然对称；槽位少的一侧向箭头靠拢而不是整体居中。</p>
+ * <p>排版为三段：中部“输入整体、箭头、输出整体”，底部三行数值。输入与输出各自是一个整体，
+ * 整体宽度由自身内容决定；两个整体的中心与箭头中心在内容区宽度内等距分布，
+ * 因此某一侧槽位偏少时只是整体变窄，画面仍然平衡。</p>
+ *
+ * <p>整体内部先排物品槽，两种槽都有时另起一行再排流体槽，每种槽都从左往右、从上往下填格。</p>
  *
  * <p>所有元素都用绝对坐标摆放：JEI 通过元素的局部坐标反查槽位，绝对定位让坐标只由下标决定，
  * 不会因为相邻元素变化而漂移。</p>
@@ -55,6 +58,7 @@ public class MultiblockRecipeUI {
         RecipeContents contents = RecipeContents.of(recipe);
         int height = layout.height();
         int contentHeight = height - JeiLayout.PANEL_PADDING * 2;
+        int maxColumns = layout.columns();
 
         UIElement root = new UIElement()
             .layout(l -> l
@@ -67,27 +71,26 @@ public class MultiblockRecipeUI {
             .layout(l -> l.width(JeiLayout.CONTENT_WIDTH).height(contentHeight));
         root.addChild(content);
 
-        int columns = layout.columns();
-        int inputHeight = contents.inputHeight(columns);
-        int outputHeight = contents.outputHeight(columns);
+        int inputColumns = contents.inputColumns(maxColumns);
+        int outputColumns = contents.outputColumns(maxColumns);
+        int inputHeight = contents.inputHeight(maxColumns);
+        int outputHeight = contents.outputHeight(maxColumns);
 
-        addColumn(
+        addBlock(
             content,
             toItemSlots(contents.itemInputs()),
             toFluidSlots(contents.fluidInputs()),
-            layout.inputLeft(),
-            layout.columnTop(inputHeight),
-            columns,
-            true
+            layout.blockLeft(contents.inputWidth(maxColumns), true),
+            layout.blockTop(inputHeight),
+            inputColumns
         );
-        addColumn(
+        addBlock(
             content,
             toItemSlots(contents.itemOutputs()),
             toFluidSlots(contents.fluidOutputs()),
-            layout.outputLeft(),
-            layout.columnTop(outputHeight),
-            columns,
-            false
+            layout.blockLeft(contents.outputWidth(maxColumns), false),
+            layout.blockTop(outputHeight),
+            outputColumns
         );
         Arrow.centerIn(content, layout.arrowTop(), recipe.time());
 
@@ -99,54 +102,41 @@ public class MultiblockRecipeUI {
     }
 
     /**
-     * 摆放一列：物品组在上、流体组在下，空组不占位
-     *
-     * <p>每一行都朝箭头一侧对齐，不足一行时空位留在外侧。</p>
-     *
-     * @param hugEnd 是否靠箭头一侧对齐；输入列在箭头左侧，靠右对齐，输出列相反
+     * 摆放一个整体：先物品组，两种都有时另起一行再排流体组
      */
-    private static void addColumn(
+    private static void addBlock(
         UIElement content,
         List<UIElement> items,
         List<UIElement> fluids,
         int left,
         int top,
-        int columns,
-        boolean hugEnd
+        int columns
     ) {
         int y = top;
         if (!items.isEmpty()) {
-            place(content, items, left, y, columns, hugEnd);
+            place(content, items, left, y, columns);
             y += JeiLayout.gridHeight(items.size(), columns) + 2;
         }
         if (!fluids.isEmpty()) {
-            place(content, fluids, left, y, columns, hugEnd);
+            place(content, fluids, left, y, columns);
         }
     }
 
     /**
      * 按网格逐个摆放槽位
      *
-     * <p>每一行都朝箭头一侧对齐：不足一行时，靠箭头的那一端先占满，空出来的格子留在外侧。
-     * 这样槽位少的配方也不会跑到另一条配方的槽位位置上。</p>
-     *
-     * @param hugEnd 是否靠右侧对齐，输入列为 {@code true}
+     * <p>从左往右、从上往下依次填格：前几行填满，末行靠左，空位留在该行右侧。</p>
      */
     private static void place(
         UIElement content,
         List<UIElement> slots,
         int left,
         int top,
-        int columns,
-        boolean hugEnd
+        int columns
     ) {
         for (int index = 0; index < slots.size(); index++) {
             int row = index / columns;
-            int inRow = Math.min(columns, slots.size() - row * columns);
             int column = index % columns;
-            if (hugEnd) {
-                column += columns - inRow;
-            }
             float x = left + column * (JeiLayout.SLOT + JeiLayout.SLOT_GAP);
             float y = top + row * (JeiLayout.SLOT + JeiLayout.SLOT_GAP);
             UIElement slot = slots.get(index);

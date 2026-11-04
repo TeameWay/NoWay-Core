@@ -23,6 +23,9 @@ import java.util.List;
  * <p>把配方里的多态输入输出统一成物品列表、流体列表与能量数值，排版层只关心数量与尺寸，
  * 不需要再判断资源种类。排版计算与界面搭建共用同一份拆解结果，避免两处判断不一致。</p>
  *
+ * <p>输入侧与输出侧各自是一个“整体”：整体内部先排物品槽，两种槽都有时另起一行再排流体槽，
+ * 每种槽都从左往右、从上往下填格。整体宽度取自身内容的列数，因此槽位少的整体会更窄。</p>
+ *
  * @param itemInputs   物品输入，未消耗的输入按催化剂处理
  * @param fluidInputs  流体输入
  * @param itemOutputs  物品产出
@@ -81,7 +84,12 @@ public record RecipeContents(
         return new RecipeContents(itemInputs, fluidInputs, itemOutputs, fluidOutputs, energyInput);
     }
 
-    private static int columnHeight(int items, int fluids, int columns) {
+    private static int columns(int items, int fluids, int maxColumns) {
+        int widest = Math.max(items, fluids);
+        return Math.max(1, Math.min(maxColumns, widest));
+    }
+
+    private static int blockHeight(int items, int fluids, int columns) {
         int height = 0;
         if (items > 0) {
             height += JeiLayout.gridHeight(items, columns);
@@ -90,6 +98,54 @@ public record RecipeContents(
             height += (height > 0 ? GROUP_GAP : 0) + JeiLayout.gridHeight(fluids, columns);
         }
         return height;
+    }
+
+    /**
+     * @param maxColumns 分类允许的最大列数
+     * @return 输入整体所需的列数，至少 1
+     */
+    public int inputColumns(int maxColumns) {
+        return columns(this.itemInputs.size(), this.fluidInputs.size(), maxColumns);
+    }
+
+    /**
+     * @param maxColumns 分类允许的最大列数
+     * @return 输出整体所需的列数，至少 1
+     */
+    public int outputColumns(int maxColumns) {
+        return columns(this.itemOutputs.size(), this.fluidOutputs.size(), maxColumns);
+    }
+
+    /**
+     * @param maxColumns 分类允许的最大列数
+     * @return 输入整体的宽度
+     */
+    public int inputWidth(int maxColumns) {
+        return JeiLayout.gridWidth(inputColumns(maxColumns));
+    }
+
+    /**
+     * @param maxColumns 分类允许的最大列数
+     * @return 输出整体的宽度
+     */
+    public int outputWidth(int maxColumns) {
+        return JeiLayout.gridWidth(outputColumns(maxColumns));
+    }
+
+    /**
+     * @param maxColumns 分类允许的最大列数
+     * @return 输入整体的高度，物品组与流体组上下相接
+     */
+    public int inputHeight(int maxColumns) {
+        return blockHeight(this.itemInputs.size(), this.fluidInputs.size(), inputColumns(maxColumns));
+    }
+
+    /**
+     * @param maxColumns 分类允许的最大列数
+     * @return 输出整体的高度
+     */
+    public int outputHeight(int maxColumns) {
+        return blockHeight(this.itemOutputs.size(), this.fluidOutputs.size(), outputColumns(maxColumns));
     }
 
     private static List<SlotItem> inputItems(ResourceIngredient.Items items) {
@@ -116,36 +172,6 @@ public record RecipeContents(
 
     private static int constant(ContextIntProvider provider) {
         return provider instanceof ConstantValue(int value) ? value : 1;
-    }
-
-    /**
-     * @return 输入侧全部格子数，物品与流体合并计算
-     */
-    public int inputCells() {
-        return this.itemInputs.size() + this.fluidInputs.size();
-    }
-
-    /**
-     * @return 输出侧全部格子数
-     */
-    public int outputCells() {
-        return this.itemOutputs.size() + this.fluidOutputs.size();
-    }
-
-    /**
-     * @param columns 每行列数
-     * @return 输入侧在该列数下的高度
-     */
-    public int inputHeight(int columns) {
-        return columnHeight(this.itemInputs.size(), this.fluidInputs.size(), columns);
-    }
-
-    /**
-     * @param columns 每行列数
-     * @return 输出侧在该列数下的高度
-     */
-    public int outputHeight(int columns) {
-        return columnHeight(this.itemOutputs.size(), this.fluidOutputs.size(), columns);
     }
 
     /**

@@ -8,16 +8,18 @@ import java.util.List;
 /**
  * 配方页排版
  *
- * <p>中部把“输入列、箭头、输出列”当作一整行，行内四段间距——左右页边、两处箭头间隔——全部相等，
- * 于是箭头自然落在面板水平中线上，两侧槽位严格对称。列宽由该分类最大的槽位数量决定，
- * 槽位少的一侧不会因为列窄而偏向一边，只是整行重新等分。</p>
+ * <p>中部把“输入整体、箭头、输出整体”当作一整行。输入与输出各自按内容决定宽度，
+ * 只有整体的中心参与对齐：三者的中心在内容区内等距分布，间距由较宽的一侧决定，
+ * 因此一侧槽位少时只是整体变窄，三个中心仍然等距。</p>
  *
  * <p>所有坐标相对面板内容区左上角，供绝对定位直接使用。</p>
  *
- * @param columns    每侧列数，1~3
- * @param bodyHeight 中部区域高度，取两侧列高与箭头高度的最大值
+ * @param columns   该分类单侧允许的最大列数
+ * @param inputWidth  输入整体在最宽配方下的宽度
+ * @param outputWidth 输出整体在最宽配方下的宽度
+ * @param bodyHeight  中部区域高度，取两侧整体高度与箭头高度的最大值
  */
-public record RecipeLayout(int columns, int bodyHeight) {
+public record RecipeLayout(int columns, int inputWidth, int outputWidth, int bodyHeight) {
     /**
      * 每侧最多三列。
      */
@@ -35,14 +37,14 @@ public record RecipeLayout(int columns, int bodyHeight) {
      */
     private static final int BODY_OFFSET = 6;
     /**
-     * 一整行里被等分的间距数量：左页边、两处箭头间隔、右页边。
+     * 整体之间允许的最小间隔，避免槽位贴到箭头或页面边缘。
      */
-    private static final int ROW_GAPS = 4;
+    private static final int MIN_GAP = 4;
 
     /**
      * 按该分类全部配方计算统一排版
      *
-     * <p>列数先按最大格子数确定，再用最终列数重算高度：列数不同会改变换行位置，
+     * <p>列数上限取所有配方里最宽的一侧，再用最终列数重算高度：列数不同会改变换行位置，
      * 若先用 1 列估算高度，最终布局会偏小。</p>
      *
      * @param recipes 该分类的配方
@@ -50,8 +52,17 @@ public record RecipeLayout(int columns, int bodyHeight) {
      */
     public static RecipeLayout of(List<RecipeContents> recipes) {
         int widest = 1;
+        int inColumns = 1;
+        int outColumns = 1;
         for (RecipeContents recipe : recipes) {
-            widest = Math.max(widest, Math.max(recipe.inputCells(), recipe.outputCells()));
+            inColumns = Math.max(inColumns, recipe.inputColumns(MAX_COLUMNS));
+            outColumns = Math.max(outColumns, recipe.outputColumns(MAX_COLUMNS));
+            widest = Math.max(
+                widest, Math.max(
+                    recipe.itemInputs().size() + recipe.fluidInputs().size(),
+                    recipe.itemOutputs().size() + recipe.fluidOutputs().size()
+                )
+            );
         }
         int columns = Math.max(1, Math.min(MAX_COLUMNS, widest));
 
@@ -59,7 +70,12 @@ public record RecipeLayout(int columns, int bodyHeight) {
         for (RecipeContents recipe : recipes) {
             body = Math.max(body, Math.max(recipe.inputHeight(columns), recipe.outputHeight(columns)));
         }
-        return new RecipeLayout(columns, body);
+        return new RecipeLayout(
+            columns,
+            JeiLayout.gridWidth(inColumns),
+            JeiLayout.gridWidth(outColumns),
+            body
+        );
     }
 
     /**
@@ -71,57 +87,44 @@ public record RecipeLayout(int columns, int bodyHeight) {
     }
 
     /**
-     * @return 一列的宽度
-     */
-    public int columnWidth() {
-        return this.columns * JeiLayout.SLOT + (this.columns - 1) * JeiLayout.SLOT_GAP;
-    }
-
-    /**
-     * 行内统一间距
+     * 三者中心之间的间距
      *
-     * <p>内容区宽度减去两列与箭头后，余量由四段间距平分；整除的零头由 {@link #rowOffset()}
-     * 均摊到两侧，保证左右仍然对称。</p>
+     * <p>中心间距受到两侧整体宽度与内容区宽度的共同约束：靠近页边的一侧至少要留
+     * {@link #MIN_GAP}，另一侧按较宽整体折算。取能同时满足两侧的最大值，
+     * 于是三个中心严格等距且不会越过页面边界。</p>
      *
-     * @return 间距
+     * @return 中心间距
      */
-    public int gap() {
-        return Math.max(0, (JeiLayout.CONTENT_WIDTH - 2 * this.columnWidth() - JeiLayout.ARROW_WIDTH) / ROW_GAPS);
+    public int centerGap() {
+        // 箭头中心到页边的可用距离，扣掉较宽整体的半宽与最小间隔
+        int half = (int) Math.ceil(Math.max(this.inputWidth, this.outputWidth) / 2.0);
+        int limit = JeiLayout.CONTENT_WIDTH / 2 - half - MIN_GAP;
+        return Math.max(0, limit);
     }
 
     /**
-     * @return 整行实际占用的宽度
-     */
-    public int rowWidth() {
-        return 2 * this.columnWidth() + JeiLayout.ARROW_WIDTH + ROW_GAPS * this.gap();
-    }
-
-    /**
-     * @return 整行左侧的额外偏移，用于吃掉整除余数
-     */
-    public int rowOffset() {
-        return Math.max(0, (JeiLayout.CONTENT_WIDTH - this.rowWidth()) / 2);
-    }
-
-    /**
-     * @return 输入列左边缘
-     */
-    public int inputLeft() {
-        return this.rowOffset() + this.gap();
-    }
-
-    /**
-     * @return 箭头左边缘，恰好位于两列正中间
+     * 箭头左边缘，始终落在内容区水平中线上
+     *
+     * @return 左边缘
      */
     public int arrowLeft() {
-        return this.inputLeft() + this.columnWidth() + this.gap();
+        return JeiLayout.CONTENT_WIDTH / 2 - JeiLayout.ARROW_WIDTH / 2;
     }
 
     /**
-     * @return 输出列左边缘
+     * 按整体宽度算出它应放的左边缘，使其中心与箭头中心相差一个 {@link #centerGap()}
+     *
+     * @param width  整体实际宽度
+     * @param before 是否位于箭头左侧
+     * @return 左边缘
      */
-    public int outputLeft() {
-        return this.arrowLeft() + JeiLayout.ARROW_WIDTH + this.gap();
+    public int blockLeft(int width, boolean before) {
+        int center = JeiLayout.CONTENT_WIDTH / 2;
+        int offset = this.centerGap();
+        if (before) {
+            return center - offset - width / 2;
+        }
+        return center + offset - width / 2;
     }
 
     /**
@@ -139,10 +142,10 @@ public record RecipeLayout(int columns, int bodyHeight) {
     }
 
     /**
-     * @param columnHeight 该列实际高度
-     * @return 该列的纵向位置，列高不一致时保持垂直居中
+     * @param blockHeight 整体实际高度
+     * @return 整体的纵向位置，整体高度不一致时保持垂直居中
      */
-    public int columnTop(int columnHeight) {
-        return BODY_OFFSET + Math.max(0, (this.bodyHeight - columnHeight) / 2);
+    public int blockTop(int blockHeight) {
+        return BODY_OFFSET + Math.max(0, (this.bodyHeight - blockHeight) / 2);
     }
 }

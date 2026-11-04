@@ -89,4 +89,14 @@ public class JeiLayout {
         int rows = (count + columns - 1) / columns;
         return rows == 0 ? 0 : rows * SLOT + (rows - 1) * SLOT_GAP;
     }
+
+    /**
+     * 计算一组槽位排成网格后的宽度
+     *
+     * @param columns 每行列数
+     * @return 宽度
+     */
+    public static int gridWidth(int columns) {
+        return columns * SLOT + (columns - 1) * SLOT_GAP;
+    }
 }
