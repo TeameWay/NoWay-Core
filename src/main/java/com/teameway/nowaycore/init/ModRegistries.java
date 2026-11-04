@@ -18,7 +18,7 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
  * 这里只登记代码侧的控制器与机器声明。</p>
  */
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
-public final class ModRegistries {
+public class ModRegistries {
     /**
      * 多方块控制器，条目值即 {@link IController} 实例
      */

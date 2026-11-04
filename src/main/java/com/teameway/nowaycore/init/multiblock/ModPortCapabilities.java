@@ -16,9 +16,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
  * 控制器不需要再做一层中转。</p>
  */
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
-public final class ModPortCapabilities {
-    private ModPortCapabilities() {
-    }
+public class ModPortCapabilities {
 
     /**
      * 注册物品/流体/能量能力

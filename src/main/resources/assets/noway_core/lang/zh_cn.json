@@ -19,5 +19,7 @@
   "gui.noway_core.port.parallels": "并行：+%s",
   "gui.noway_core.jei.time": "耗时：%s 秒",
   "gui.noway_core.jei.energy": "能量：%s FE",
-  "gui.noway_core.jei.no_structure": "结构预览不可用"
+  "gui.noway_core.jei.no_structure": "结构预览不可用",
+  "gui.noway_core.jei.multiblock_info": "多方块结构",
+  "gui.noway_core.jei.chance": "概率：%s"
 }

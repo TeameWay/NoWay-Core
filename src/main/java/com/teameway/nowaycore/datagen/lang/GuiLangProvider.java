@@ -22,5 +22,7 @@ public class GuiLangProvider {
         provider.add("gui.noway_core.jei.time", "Time: %ss");
         provider.add("gui.noway_core.jei.energy", "Energy: %s FE");
         provider.add("gui.noway_core.jei.no_structure", "Structure preview unavailable");
+        provider.add("gui.noway_core.jei.multiblock_info", "Multiblock Structure");
+        provider.add("gui.noway_core.jei.chance", "Chance: %s");
     }
 }

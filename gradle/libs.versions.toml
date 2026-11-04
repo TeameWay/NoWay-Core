@@ -6,7 +6,7 @@ jade = "26.3.5+neoforge"
 modDevGradle = "2.0.148"
 lombok = "9.4.0"
 anvillib = "2.0.0+snapshot.598"
-ldlib2 = "26.3.2.41"
+ldlib2 = "26.3.2.45.a"
 appeng = "26.3.1-alpha"
 
 [libraries]

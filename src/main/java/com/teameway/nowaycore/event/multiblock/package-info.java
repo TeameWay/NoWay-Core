@@ -1,4 +1,4 @@
 @NullMarked
-package com.teameway.nowaycore.common.gui;
+package com.teameway.nowaycore.event.multiblock;
 
 import org.jspecify.annotations.NullMarked;

@@ -6,11 +6,15 @@ import com.teameway.nowaycore.common.recipe.CompiledRecipe;
 import com.teameway.nowaycore.common.recipe.MultiblockRecipeIndex;
 import com.teameway.nowaycore.common.recipe.TypeIndex;
 import com.teameway.nowaycore.init.ModRegistries;
+import com.teameway.nowaycore.integration.jei.categories.MultiblockInfoRecipeCategory;
+import com.teameway.nowaycore.integration.jei.categories.MultiblockRecipeCategory;
+import com.teameway.nowaycore.integration.jei.ui.MultiblockRecipeUI;
 import dev.anvilcraft.lib.v2.registrum.util.entry.RegistryEntry;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.types.IRecipeType;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.resources.Identifier;
@@ -26,11 +30,26 @@ import java.util.Map;
  * 因此参考排序（优先级）与机器实际选择配方的顺序一致。</p>
  */
 @JeiPlugin
-public final class NowayJEIPlugin implements IModPlugin {
+public class NowayJEIPlugin implements IModPlugin {
     private static final Map<Identifier, IRecipeType<CompiledRecipe>> TYPES = new HashMap<>();
 
     private static IRecipeType<CompiledRecipe> typeOf(Identifier machine) {
         return TYPES.computeIfAbsent(machine, id -> IRecipeType.create(id, CompiledRecipe.class));
+    }
+
+    /**
+     * 取某机器类型当前的配方列表，索引尚未建立时返回空列表。
+     *
+     * @param machine 机器类型 ID
+     * @return 已按优先级排序的配方
+     */
+    private static List<CompiledRecipe> recipesOf(Identifier machine) {
+        MultiblockRecipeIndex index = MultiblockRecipeIndex.current();
+        if (index == null) {
+            return List.of();
+        }
+        TypeIndex type = index.type(machine);
+        return type == null ? List.of() : type.recipes();
     }
 
     @Override
@@ -41,25 +60,40 @@ public final class NowayJEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         IJeiHelpers helpers = registration.getJeiHelpers();
+        registration.addRecipeCategories(new MultiblockInfoRecipeCategory(helpers));
         for (RegistryEntry<MultiblockType, MultiblockType> entry : NoWayCore.REGISTRUM.getAll(ModRegistries.MULTIBLOCK_TYPES)) {
-            MultiblockRecipeCategory category = new MultiblockRecipeCategory(helpers, typeOf(entry.getId()), entry.get());
+            List<CompiledRecipe> recipes = recipesOf(entry.getId());
+            MultiblockRecipeCategory category = new MultiblockRecipeCategory(
+                helpers, typeOf(entry.getId()), entry.get(), MultiblockRecipeUI.heightFor(recipes)
+            );
             registration.addRecipeCategories(category);
         }
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        MultiblockRecipeIndex index = MultiblockRecipeIndex.current();
-        if (index == null) {
-            return;
-        }
+        registration.addRecipes(
+            MultiblockInfoRecipeCategory.RECIPE_TYPE,
+            NoWayCore.REGISTRUM.getAll(ModRegistries.MULTIBLOCK_TYPES)
+                .stream()
+                .map(entry -> MultiblockInfoRecipeCategory.MultiblockInfo.of(entry.getId(), entry.get()))
+                .toList()
+        );
         for (RegistryEntry<MultiblockType, MultiblockType> entry : NoWayCore.REGISTRUM.getAll(ModRegistries.MULTIBLOCK_TYPES)) {
-            TypeIndex type = index.type(entry.getId());
-            if (type == null) {
+            List<CompiledRecipe> recipes = recipesOf(entry.getId());
+            if (recipes.isEmpty()) {
                 continue;
             }
-            List<CompiledRecipe> recipes = type.recipes();
             registration.addRecipes(typeOf(entry.getId()), recipes);
+        }
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        for (RegistryEntry<MultiblockType, MultiblockType> entry : NoWayCore.REGISTRUM.getAll(ModRegistries.MULTIBLOCK_TYPES)) {
+            var stack = entry.get().controller().get().getBlock().asItem().getDefaultInstance();
+            registration.addCraftingStation(typeOf(entry.getId()), stack);
+            registration.addCraftingStation(MultiblockInfoRecipeCategory.RECIPE_TYPE, stack);
         }
     }
 }

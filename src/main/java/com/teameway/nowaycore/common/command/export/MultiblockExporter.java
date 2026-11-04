@@ -34,15 +34,12 @@ import java.util.Objects;
  * 与 datagen 产物完全同构；{@link ExportFormat#JAVA} 生成可直接粘贴到
  * {@code ModMultiblockDefinitions} 的链式代码。</p>
  */
-public final class MultiblockExporter {
+public class MultiblockExporter {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Map<Block, String> VANILLA_BLOCKS = indexBlocks();
     private static final Map<Property<?>, String> PROPERTY_CONSTANTS = indexProperties();
     private static final String NEW_LINE = System.lineSeparator();
     private static final char QUOTE = '"';
-
-    private MultiblockExporter() {
-    }
 
     /**
      * 导出选区内的多方块结构

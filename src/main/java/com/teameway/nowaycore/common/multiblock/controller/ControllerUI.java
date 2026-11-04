@@ -21,14 +21,11 @@ import java.util.List;
  * <p>用 LDLib2 的声明式元素搭建：标题、类型与形态、线程与并行数，以及每个线程一行的进度条。
  * 所有数据都来自控制器方块实体上同步过的字段，界面本身不持有运行时对象，因此两端可用同一份代码。</p>
  */
-public final class ControllerUI {
+public class ControllerUI {
     private static final int WIDTH = 236;
     private static final int PADDING = 5;
     private static final int LINE = 10;
     private static final int ROW = 15;
-
-    private ControllerUI() {
-    }
 
     /**
      * 构建控制器界面

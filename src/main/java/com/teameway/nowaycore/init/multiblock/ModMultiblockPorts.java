@@ -27,7 +27,7 @@ import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
  * <p>每种端口一个方块、一个等级；加新等级时在这里加一行即可。端口方块只保存“种类 + 等级”，
  * 容量由方块实体按等级创建。</p>
  */
-public final class ModMultiblockPorts {
+public class ModMultiblockPorts {
     /**
      * 输入总线（物品）
      */
@@ -105,9 +105,6 @@ public final class ModMultiblockPorts {
             "control_port",
             () -> new BlockEntityType<>(ControlPortBlockEntity::new, PARALLEL.get(), THREAD.get())
         );
-
-    private ModMultiblockPorts() {
-    }
 
     /**
      * 挂到模组事件总线

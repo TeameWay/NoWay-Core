@@ -24,12 +24,9 @@ import java.util.Locale;
  *
  * <p>需要 OP 4 级权限；读取选区方块并导出多方块定义，文件写入服务端目录下的 {@code exports/}。</p>
  */
-public final class MultiblockExportCommand {
+public class MultiblockExportCommand {
     private static final DateTimeFormatter FILE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
     private static final String EXPORT_DIR = "exports";
-
-    private MultiblockExportCommand() {
-    }
 
     /**
      * 注册 {@code /no_way export} 命令

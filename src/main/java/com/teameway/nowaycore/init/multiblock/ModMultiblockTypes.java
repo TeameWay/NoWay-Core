@@ -8,7 +8,7 @@ import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 /**
  * 机器类型注册
  */
-public final class ModMultiblockTypes {
+public class ModMultiblockTypes {
     /**
      * 简易处理器类型
      */
@@ -17,9 +17,6 @@ public final class ModMultiblockTypes {
             "simple_processor",
             () -> new MultiblockType(ModMultiblockControllers.SIMPLE_PROCESSOR_CONTROLLER)
         ).register();
-
-    private ModMultiblockTypes() {
-    }
 
     public static void register() {
     }
