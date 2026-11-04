@@ -2,9 +2,9 @@ package com.teameway.nowaycore.common.multiblock.machine;
 
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.common.multiblock.port.MultiblockPortTable;
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
-import com.teameway.nowaycore.common.recipe.MultiblockRecipeIndex;
-import com.teameway.nowaycore.common.recipe.TypeIndex;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
+import com.teameway.nowaycore.recipe.MultiblockRecipeIndex;
+import com.teameway.nowaycore.recipe.TypeIndex;
 import dev.anvilcraft.lib.v2.multiblock.dynamic.definition.MultiblockDefinition;
 import dev.anvilcraft.lib.v2.multiblock.init.LibRegistries;
 import net.minecraft.core.Holder;
@@ -24,7 +24,7 @@ import java.util.Set;
  * <p>每个线程一个 job 槽；空闲线程每 tick 尝试匹配，运行中的线程只推进进度。并行倍数在任务开始时
  * 确定，执行时再按当时的实际输入复核，材料不够就缩小批次或放弃任务。</p>
  */
-public final class MachineRuntime {
+public class MachineRuntime {
     private static final int BLOCKED_COOLDOWN = 20;
     private static final int FAILED_COOLDOWN = 100;
 

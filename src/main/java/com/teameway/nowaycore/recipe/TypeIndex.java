@@ -1,4 +1,4 @@
-package com.teameway.nowaycore.common.recipe;
+package com.teameway.nowaycore.recipe;
 
 import com.teameway.nowaycore.resource.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>形态过滤采用子集语义：只有配方要求的全部形态都出现在机器当前形态里，配方才参与匹配。
  * 于是无形态要求的配方对任何机器有效，而没有形态的机器只能匹配无形态要求的配方。</p>
  */
-public final class TypeIndex {
+public class TypeIndex {
     private final Identifier machine;
     private final List<CompiledRecipe> recipes;
     private final BitSet all;

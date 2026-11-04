@@ -1,7 +1,7 @@
 package com.teameway.nowaycore.init;
 
 import com.teameway.nowaycore.NoWayCore;
-import com.teameway.nowaycore.common.recipe.MultiblockRecipe;
+import com.teameway.nowaycore.recipe.MultiblockRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.neoforged.bus.api.IEventBus;

@@ -3,7 +3,7 @@ package com.teameway.nowaycore.integration.jei.ui.widget;
 import com.lowdragmc.lowdraglib2.gui.texture.VanillaSpriteTexture;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.event.UIEvents;
-import com.teameway.nowaycore.integration.jei.ui.JeiLayout;
+import com.teameway.nowaycore.integration.jei.layout.JeiLayout;
 import dev.vfyjxf.taffy.style.TaffyPosition;
 import net.minecraft.resources.Identifier;
 

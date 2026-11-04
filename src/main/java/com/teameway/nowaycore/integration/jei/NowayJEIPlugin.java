@@ -2,12 +2,12 @@ package com.teameway.nowaycore.integration.jei;
 
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.common.multiblock.MultiblockType;
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
-import com.teameway.nowaycore.common.recipe.MultiblockRecipeIndex;
-import com.teameway.nowaycore.common.recipe.TypeIndex;
 import com.teameway.nowaycore.init.ModRegistries;
 import com.teameway.nowaycore.integration.jei.categories.MultiblockInfoRecipeCategory;
 import com.teameway.nowaycore.integration.jei.categories.MultiblockRecipeCategory;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
+import com.teameway.nowaycore.recipe.MultiblockRecipeIndex;
+import com.teameway.nowaycore.recipe.TypeIndex;
 import dev.anvilcraft.lib.v2.registrum.util.entry.RegistryEntry;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;

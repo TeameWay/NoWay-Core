@@ -6,7 +6,7 @@ package com.teameway.nowaycore.common.multiblock.machine;
  * <p>同一 tick 内多个线程依次匹配配方，前面的线程会占用部分输入；后续线程看到的可用量要扣掉
  * 这些预留，避免同一个配方被打满输入。账本按槽位记录，周期结束清空。</p>
  */
-public final class ReservationLedger {
+public class ReservationLedger {
     private final long[] items;
     private final long[] fluids;
     private long energy;

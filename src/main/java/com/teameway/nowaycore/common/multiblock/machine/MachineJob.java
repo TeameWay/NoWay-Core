@@ -1,8 +1,8 @@
 package com.teameway.nowaycore.common.multiblock.machine;
 
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
-import com.teameway.nowaycore.common.recipe.MultiblockRecipeIndex;
-import com.teameway.nowaycore.common.recipe.TypeIndex;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
+import com.teameway.nowaycore.recipe.MultiblockRecipeIndex;
+import com.teameway.nowaycore.recipe.TypeIndex;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 
@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
  * <p>只保存配方 ID、进度和并行倍数；读档后配方对象按 ID 从索引惰性找回，索引尚未构建时任务会
  * 自动放弃。缓存的配方绑定索引版本，配方重载后会重新解析，避免继续执行旧数据。</p>
  */
-public final class MachineJob {
+public class MachineJob {
     private final Identifier recipeId;
     private final int batch;
     private int progress;

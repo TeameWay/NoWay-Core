@@ -1,7 +1,8 @@
 package com.teameway.nowaycore.integration.jei.ui;
 
 import com.lowdragmc.lowdraglib2.integration.xei.IngredientIO;
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
+import com.teameway.nowaycore.integration.jei.layout.JeiLayout;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
 import com.teameway.nowaycore.resource.ResourceIngredient;
 import com.teameway.nowaycore.resource.ResourceOutput;
 import net.minecraft.core.Holder;
@@ -42,7 +43,7 @@ public record RecipeContents(
     /**
      * 物品组与流体组之间的纵向间距。
      */
-    private static final int GROUP_GAP = 2;
+    private static final int GROUP_GAP = 1;
 
     /**
      * 按 JEI 的排布拆解配方
@@ -66,11 +67,15 @@ public record RecipeContents(
         }
         for (ResourceOutput output : compiled.recipe().outputs()) {
             switch (output) {
-                case ResourceOutput.Items items -> itemOutputs.add(new SlotItem(
-                    ItemResource.of(items.template()).toStack(constant(items.amount())),
-                    IngredientIO.OUTPUT,
-                    items.chance()
-                ));
+                case ResourceOutput.Items items -> {
+                    int amount = constant(items.amount());
+                    itemOutputs.add(new SlotItem(
+                        ItemResource.of(items.template()).toStack(amount),
+                        amount,
+                        IngredientIO.OUTPUT,
+                        items.chance()
+                    ));
+                }
                 case ResourceOutput.Fluids fluids -> fluidOutputs.add(new SlotFluid(
                     FluidResource.of(fluids.fluid()).toStack(constant(fluids.amount())),
                     IngredientIO.OUTPUT,
@@ -150,14 +155,27 @@ public record RecipeContents(
 
     private static List<SlotItem> inputItems(ResourceIngredient.Items items) {
         List<SlotItem> stacks = new ArrayList<>();
-        int count = items.predicate().count();
+        long count = items.input().count();
         IngredientIO io = items.consumed() ? IngredientIO.INPUT : IngredientIO.CATALYST;
-        items.predicate().items().ifPresent(set -> {
+        items.input().items().ifPresent(set -> {
             for (Holder<Item> holder : set) {
-                stacks.add(new SlotItem(new ItemStack(holder.value(), count), io, 1.0F));
+                stacks.add(new SlotItem(new ItemStack(holder.value(), stackCount(count)), count, io, 1.0F));
             }
         });
         return stacks;
+    }
+
+    /**
+     * 把 {@code long} 需求量压进物品堆栈的数量字段
+     *
+     * <p>堆栈的数量是 {@code int}，直接塞入超出范围的值会截断成负数，整个堆栈随之判空、槽位变成空位。
+     * 这里只用于承载“有这个物品”这件事，真实数量由 {@link SlotItem#amount()} 另行携带。</p>
+     *
+     * @param count 需求量
+     * @return 可以放进堆栈的数量，至少 1
+     */
+    private static int stackCount(long count) {
+        return (int) Math.clamp(count, 1L, Integer.MAX_VALUE);
     }
 
     private static List<SlotFluid> inputFluids(ResourceIngredient.Fluids fluids) {
@@ -175,11 +193,12 @@ public record RecipeContents(
     }
 
     /**
-     * @param stack  槽位展示的物品
+     * @param stack  槽位展示的物品，数量已被压进 {@code int}
+     * @param amount 真实需求量，可能超出堆栈能表达的范围
      * @param io     JEI 语义角色，未消耗的输入为催化剂
      * @param chance 产出概率，输入恒为 1
      */
-    public record SlotItem(ItemStack stack, IngredientIO io, float chance) {
+    public record SlotItem(ItemStack stack, long amount, IngredientIO io, float chance) {
     }
 
     /**

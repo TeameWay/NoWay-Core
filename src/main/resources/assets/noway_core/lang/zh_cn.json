@@ -22,5 +22,6 @@
   "gui.noway_core.jei.energy_rate": "耗能功率：%s FE/t",
   "gui.noway_core.jei.no_structure": "结构预览不可用",
   "gui.noway_core.jei.multiblock_info": "多方块结构",
-  "gui.noway_core.jei.chance": "概率：%s"
+  "gui.noway_core.jei.chance": "概率：%s",
+  "gui.noway_core.slot.count": "数量：%s"
 }

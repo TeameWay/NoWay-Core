@@ -19,7 +19,7 @@ import java.util.Set;
  * <p>把端口表的输入池展开成“按槽位的可用量”，供匹配与事务使用。输出池不在这里，产出阶段
  * 单独处理。</p>
  */
-public final class MachineResources {
+public class MachineResources {
     private final ResourceHandler<ItemResource> itemInputs;
     private final ResourceHandler<FluidResource> fluidInputs;
     private final List<EnergyHandler> energyInputs;

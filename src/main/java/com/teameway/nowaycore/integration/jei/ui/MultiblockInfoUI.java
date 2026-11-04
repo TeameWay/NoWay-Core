@@ -6,13 +6,15 @@ import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.data.ScrollDisplay;
 import com.lowdragmc.lowdraglib2.gui.ui.data.ScrollerMode;
-import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Scene;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ScrollerView;
+import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
 import com.lowdragmc.lowdraglib2.integration.xei.IngredientIO;
 import com.teameway.nowaycore.common.multiblock.MultiblockType;
+import com.teameway.nowaycore.integration.jei.layout.JeiLayout;
 import com.teameway.nowaycore.integration.jei.layout.StructureLayout;
+import com.teameway.nowaycore.ldlib.slot.CompactItemSlot;
 import dev.vfyjxf.taffy.style.FlexDirection;
 import dev.vfyjxf.taffy.style.TaffyPosition;
 import net.minecraft.network.chat.Component;
@@ -27,7 +29,8 @@ import java.util.Map;
  * <p>左上角的单格显示玩家在预览里点中的方块；中部预览以控制器为中心；底部横排清单列出结构
  * 所需的全部方块与数量，种类多时横向滚动。</p>
  *
- * <p>清单与单格都注册成 JEI 输入原料，因此在 JEI 里查任意一种结构方块都能跳回该结构。</p>
+ * <p>清单与单格都注册成真正的 JEI 配方格，因此在 JEI 里对任意一种结构方块按 {@code R}/{@code U}
+ * 都能查到对应的配方与用途，而不仅是查回结构本身。</p>
  */
 public class MultiblockInfoUI {
 
@@ -57,19 +60,20 @@ public class MultiblockInfoUI {
             .layout(l -> l.width(JeiLayout.CONTENT_WIDTH).height(contentHeight));
         root.addChild(content);
 
-        ItemSlot selected = new ItemSlot();
+        CompactItemSlot selected = new CompactItemSlot();
         selected.layout(l -> l
             .positionType(TaffyPosition.ABSOLUTE)
             .left(0)
             .top(0)
             .width(JeiLayout.SLOT)
             .height(JeiLayout.SLOT));
+        selected.xeiRecipeSlot(IngredientIO.INPUT, 1.0F);
 
         addScene(content, type, selected);
         content.addChild(selected);
         addStrip(content, blocks, layout.stripTop());
 
-        ModularUI ui = ModularUI.of(UI.of(root, JeiLayout.stylesheets()));
+        ModularUI ui = ModularUI.of(UI.of(root, StylesheetManager.MC));
         ui.setDrawTooltips(true);
         return ui;
     }
@@ -77,7 +81,7 @@ public class MultiblockInfoUI {
     /**
      * 中部预览，点击方块时把该方块写进左上角的单格
      */
-    private static void addScene(UIElement content, MultiblockType type, ItemSlot selected) {
+    private static void addScene(UIElement content, MultiblockType type, CompactItemSlot selected) {
         Scene scene = MultiblockPreview.create(type);
         if (scene == null) {
             Label missing = JeiLayout.label(Component.translatable("gui.noway_core.jei.no_structure"));
@@ -111,9 +115,9 @@ public class MultiblockInfoUI {
         ScrollerView strip = new ScrollerView();
         UIElement row = new UIElement().layout(l -> l.flexDirection(FlexDirection.ROW).gapAll(JeiLayout.SLOT_GAP));
         blocks.forEach((block, count) -> {
-            ItemSlot slot = new ItemSlot();
+            CompactItemSlot slot = new CompactItemSlot();
             slot.setItem(new ItemStack(block.asItem(), count));
-            slot.xeiRecipeIngredient(IngredientIO.INPUT);
+            slot.xeiRecipeSlot(IngredientIO.INPUT, 1.0F);
             slot.layout(l -> l.width(JeiLayout.SLOT).height(JeiLayout.SLOT));
             row.addChild(slot);
         });

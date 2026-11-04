@@ -1,4 +1,4 @@
 @NullMarked
-package com.teameway.nowaycore.common.recipe;
+package com.teameway.nowaycore.ldlib.slot;
 
 import org.jspecify.annotations.NullMarked;

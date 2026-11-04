@@ -1,4 +1,4 @@
-package com.teameway.nowaycore.common.recipe;
+package com.teameway.nowaycore.recipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

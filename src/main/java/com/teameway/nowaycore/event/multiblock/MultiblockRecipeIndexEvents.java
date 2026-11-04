@@ -1,7 +1,8 @@
-package com.teameway.nowaycore.common.recipe;
+package com.teameway.nowaycore.event.multiblock;
 
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.init.ModRecipeTypes;
+import com.teameway.nowaycore.recipe.MultiblockRecipeIndex;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
@@ -14,7 +15,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
  * 多方块配方类型同步给客户端，否则客户端拿不到这些配方。</p>
  */
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
-public final class MultiblockRecipeIndexEvents {
+public class MultiblockRecipeIndexEvents {
     private MultiblockRecipeIndexEvents() {
     }
 

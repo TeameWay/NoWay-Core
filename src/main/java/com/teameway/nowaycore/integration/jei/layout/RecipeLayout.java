@@ -1,6 +1,5 @@
 package com.teameway.nowaycore.integration.jei.layout;
 
-import com.teameway.nowaycore.integration.jei.ui.JeiLayout;
 import com.teameway.nowaycore.integration.jei.ui.RecipeContents;
 
 import java.util.List;

@@ -4,11 +4,13 @@ import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.FluidSlot;
-import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
+import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
+import com.teameway.nowaycore.integration.jei.layout.JeiLayout;
 import com.teameway.nowaycore.integration.jei.layout.RecipeLayout;
 import com.teameway.nowaycore.integration.jei.ui.widget.Arrow;
+import com.teameway.nowaycore.ldlib.slot.CompactItemSlot;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
 import dev.vfyjxf.taffy.style.TaffyPosition;
 import net.minecraft.network.chat.Component;
 
@@ -29,6 +31,10 @@ import java.util.Locale;
  * 不会因为相邻元素变化而漂移。</p>
  */
 public class MultiblockRecipeUI {
+    /**
+     * 物品组与流体组之间的纵向间距，与 {@link RecipeContents} 的高度计算保持一致。
+     */
+    private static final int GROUP_GAP = 1;
 
     private MultiblockRecipeUI() {
     }
@@ -96,7 +102,7 @@ public class MultiblockRecipeUI {
 
         addTexts(content, recipe, contents.energyInput(), layout.textTop());
 
-        ModularUI ui = ModularUI.of(UI.of(root, JeiLayout.stylesheets()));
+        ModularUI ui = ModularUI.of(UI.of(root, StylesheetManager.MC));
         ui.setDrawTooltips(true);
         return ui;
     }
@@ -115,7 +121,7 @@ public class MultiblockRecipeUI {
         int y = top;
         if (!items.isEmpty()) {
             place(content, items, left, y, columns);
-            y += JeiLayout.gridHeight(items.size(), columns) + 2;
+            y += JeiLayout.gridHeight(items.size(), columns) + GROUP_GAP;
         }
         if (!fluids.isEmpty()) {
             place(content, fluids, left, y, columns);
@@ -179,32 +185,47 @@ public class MultiblockRecipeUI {
         content.addChild(label);
     }
 
+    /**
+     * 建物品槽
+     *
+     * <p>一律用 {@code xeiRecipeSlot} 而不是 {@code xeiRecipeIngredient}：JEI 布局时会把
+     * 每个已登记槽位从自己的槽位列表里摘出来，交给 LDLib2 的部件接管命中测试，而该部件只认领
+     * “可交互”的槽位。只登记原料的槽位两边都不归它管，鼠标移上去没有反应，{@code R}/{@code U}
+     * 自然查不了。带上概率参数就能让它成为真正的配方格。</p>
+     *
+     * @param entries 物品槽内容
+     * @return 槽位元素
+     */
     private static List<UIElement> toItemSlots(List<RecipeContents.SlotItem> entries) {
         List<UIElement> slots = new ArrayList<>(entries.size());
         for (RecipeContents.SlotItem entry : entries) {
-            ItemSlot slot = new ItemSlot();
+            CompactItemSlot slot = new CompactItemSlot();
             slot.setItem(entry.stack());
+            slot.setAmount(entry.amount());
+            slot.xeiRecipeSlot(entry.io(), entry.chance());
             if (entry.chance() < 1.0F) {
-                slot.xeiRecipeSlot(entry.io(), entry.chance());
                 slot.style(style -> style.appendTooltips(chanceTooltip(entry.chance())));
-            } else {
-                slot.xeiRecipeIngredient(entry.io());
             }
             slots.add(slot);
         }
         return slots;
     }
 
+    /**
+     * 建流体槽
+     *
+     * @param entries 流体槽内容
+     * @return 槽位元素
+     * @see #toItemSlots(List)
+     */
     private static List<UIElement> toFluidSlots(List<RecipeContents.SlotFluid> entries) {
         List<UIElement> slots = new ArrayList<>(entries.size());
         for (RecipeContents.SlotFluid entry : entries) {
             FluidSlot slot = new FluidSlot();
             slot.setFluid(entry.stack());
+            slot.xeiRecipeSlot(entry.io(), entry.chance());
             if (entry.chance() < 1.0F) {
-                slot.xeiRecipeSlot(entry.io(), entry.chance());
                 slot.style(style -> style.appendTooltips(chanceTooltip(entry.chance())));
-            } else {
-                slot.xeiRecipeIngredient(entry.io());
             }
             slots.add(slot);
         }

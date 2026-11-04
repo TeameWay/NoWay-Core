@@ -1,7 +1,5 @@
 package com.teameway.nowaycore.integration.jei.layout;
 
-import com.teameway.nowaycore.integration.jei.ui.JeiLayout;
-
 /**
  * 结构页排版
  *

@@ -30,7 +30,7 @@ import java.util.List;
  * <p>八种端口共用一套骨架：标题 + 与种类对应的主体。物品端口直接绑定端口的库存处理器，
  * 因此界面里的格子就是端口的真实槽位；流体端口绑定唯一那个储罐；能量与控制端口只做读数展示。</p>
  */
-public final class PortUI {
+public class PortUI {
     private static final int PADDING = 5;
     private static final int LINE = 10;
     private static final int SLOT = 18;

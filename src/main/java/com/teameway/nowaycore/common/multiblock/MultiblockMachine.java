@@ -34,7 +34,7 @@ public record MultiblockMachine(
     /**
      * 机器声明的链式构建器
      */
-    public static final class Builder {
+    public static class Builder {
         private final RegistryEntry<IController, ? extends IController> controller;
         private @Nullable Supplier<MultiblockDefinition> definition;
 

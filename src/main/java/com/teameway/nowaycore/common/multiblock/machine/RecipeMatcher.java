@@ -1,8 +1,8 @@
 package com.teameway.nowaycore.common.multiblock.machine;
 
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
-import com.teameway.nowaycore.common.recipe.MultiblockRecipeIndex;
-import com.teameway.nowaycore.common.recipe.TypeIndex;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
+import com.teameway.nowaycore.recipe.MultiblockRecipeIndex;
+import com.teameway.nowaycore.recipe.TypeIndex;
 import com.teameway.nowaycore.resource.ResourceIngredient;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
@@ -18,7 +18,7 @@ import java.util.Set;
  * <p>先用索引位图剔除“缺资源”的候选，再按优先级从低到高逐条尝试分配输入。分配结果同时可以作为
  * 事务的扣取计划，保证“匹配”和“消耗”用的是同一份数据。</p>
  */
-public final class RecipeMatcher {
+public class RecipeMatcher {
     private RecipeMatcher() {
     }
 
@@ -102,7 +102,7 @@ public final class RecipeMatcher {
             }
             switch (ingredient) {
                 case ResourceIngredient.Items items -> {
-                    long remaining = (long) items.predicate().count() * repeats;
+                    long remaining = saturatedMultiply(items.input().count(), repeats);
                     for (int slot = 0; slot < freeItems.length && remaining > 0; slot++) {
                         if (freeItems[slot] <= 0 || !matches(resources, slot, items)) {
                             continue;
@@ -132,7 +132,7 @@ public final class RecipeMatcher {
                     }
                 }
                 case ResourceIngredient.Energy energy -> {
-                    long needed = energy.amount() * repeats;
+                    long needed = saturatedMultiply(energy.amount(), repeats);
                     if (freeEnergy < needed) {
                         return null;
                     }
@@ -189,7 +189,7 @@ public final class RecipeMatcher {
 
     private static boolean matches(MachineResources resources, int slot, ResourceIngredient.Items items) {
         ItemResource resource = resources.itemResource(slot);
-        return !resource.isEmpty() && items.predicate().testIgnoreCount(resource.toStack(1));
+        return !resource.isEmpty() && items.input().testIgnoreCount(resource.toStack(1));
     }
 
     private static boolean matches(MachineResources resources, int slot, ResourceIngredient.Fluids fluids) {
@@ -197,9 +197,23 @@ public final class RecipeMatcher {
         return !resource.isEmpty() && fluids.ingredient().ingredient().test(resource.toStack(1));
     }
 
+    /**
+     * 相乘并饱和到 {@link Long#MAX_VALUE}
+     *
+     * <p>需求数量本身可能就是 {@code long} 的上限，再乘并行倍数会溢出成负数，
+     * 那样“材料不足”会被误判成“材料充足”。</p>
+     *
+     * @param value   单次需求
+     * @param repeats 并行倍数
+     * @return 总量
+     */
+    private static long saturatedMultiply(long value, int repeats) {
+        return value > Long.MAX_VALUE / Math.max(1, repeats) ? Long.MAX_VALUE : value * Math.max(1, repeats);
+    }
+
     private static long required(ResourceIngredient ingredient) {
         return switch (ingredient) {
-            case ResourceIngredient.Items items -> items.predicate().count();
+            case ResourceIngredient.Items items -> items.input().count();
             case ResourceIngredient.Fluids fluids -> fluids.ingredient().amount();
             case ResourceIngredient.Energy energy -> energy.amount();
         };

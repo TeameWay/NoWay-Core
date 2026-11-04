@@ -1,4 +1,4 @@
-package com.teameway.nowaycore.common.recipe;
+package com.teameway.nowaycore.recipe;
 
 import com.teameway.nowaycore.resource.ResourceKey;
 import net.minecraft.resources.Identifier;

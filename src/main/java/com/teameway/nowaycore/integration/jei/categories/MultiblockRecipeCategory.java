@@ -2,10 +2,10 @@ package com.teameway.nowaycore.integration.jei.categories;
 
 import com.lowdragmc.lowdraglib2.integration.xei.jei.ModularUIRecipeCategory;
 import com.teameway.nowaycore.common.multiblock.MultiblockType;
-import com.teameway.nowaycore.common.recipe.CompiledRecipe;
+import com.teameway.nowaycore.integration.jei.layout.JeiLayout;
 import com.teameway.nowaycore.integration.jei.layout.RecipeLayout;
-import com.teameway.nowaycore.integration.jei.ui.JeiLayout;
 import com.teameway.nowaycore.integration.jei.ui.MultiblockRecipeUI;
+import com.teameway.nowaycore.recipe.CompiledRecipe;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.types.IRecipeType;

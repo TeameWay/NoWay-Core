@@ -1,11 +1,7 @@
-package com.teameway.nowaycore.integration.jei.ui;
+package com.teameway.nowaycore.integration.jei.layout;
 
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
-import com.lowdragmc.lowdraglib2.gui.ui.style.Stylesheet;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
 import net.minecraft.network.chat.Component;
-
-import java.util.List;
 
 /**
  * JEI 页面公共度量
@@ -31,9 +27,9 @@ public class JeiLayout {
      */
     public static final int SLOT = 18;
     /**
-     * 网格内相邻槽位的间距。
+     * 网格内相邻槽位的间距，槽位彼此紧贴。
      */
-    public static final int SLOT_GAP = 1;
+    public static final int SLOT_GAP = 0;
     /**
      * 不同区块之间的间距。
      */
@@ -69,13 +65,6 @@ public class JeiLayout {
         label.setText(text);
         label.layout(layout -> layout.widthPercent(100).height(LINE));
         return label;
-    }
-
-    /**
-     * @return 页面使用的样式表
-     */
-    public static List<Stylesheet> stylesheets() {
-        return List.of(StylesheetManager.INSTANCE.getStylesheetSafe(StylesheetManager.MC));
     }
 
     /**

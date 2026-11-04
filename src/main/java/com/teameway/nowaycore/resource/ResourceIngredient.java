@@ -3,7 +3,7 @@ package com.teameway.nowaycore.resource;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.anvilcraft.lib.v2.util.predicate.ItemIngredientPredicate;
+import com.teameway.nowaycore.resource.ingredient.LongItemIngredient;
 import net.minecraft.util.ExtraCodecs;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
@@ -45,17 +45,17 @@ public sealed interface ResourceIngredient {
     boolean consumed();
 
     /**
-     * 物品输入，匹配规则复用 anvillib 的 {@link ItemIngredientPredicate}
+     * 物品输入
      *
-     * @param predicate 物品谓词（物品集合 + 数量 + 组件匹配）
-     * @param consumed  是否消耗
+     * @param input    物品集合 + 数量 + 组件匹配，数量上限是 {@code long}
+     * @param consumed 是否消耗
      */
-    record Items(ItemIngredientPredicate predicate, boolean consumed) implements ResourceIngredient {
+    record Items(LongItemIngredient input, boolean consumed) implements ResourceIngredient {
         public static final MapCodec<Items> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceKind.CODEC.optionalFieldOf("type", ResourceKind.ITEM).forGetter(_ -> ResourceKind.ITEM),
-            ItemIngredientPredicate.CODEC.fieldOf("items").forGetter(Items::predicate),
+            LongItemIngredient.CODEC.fieldOf("items").forGetter(Items::input),
             Codec.BOOL.optionalFieldOf("consume", true).forGetter(Items::consumed)
-        ).apply(instance, (_, predicate, consumed) -> new Items(predicate, consumed)));
+        ).apply(instance, (_, input, consumed) -> new Items(input, consumed)));
 
 
         @Override

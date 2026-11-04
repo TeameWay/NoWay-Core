@@ -24,6 +24,7 @@
   "gui.noway_core.port.parallels": "Parallel: +%s",
   "gui.noway_core.port.slots": "Slots: %s",
   "gui.noway_core.port.threads": "Threads: +%s",
+  "gui.noway_core.slot.count": "Count: %s",
   "item.noway_core.concrete_dust": "Concrete Dust",
   "item.noway_core.energy_input_port": "Energy Input Port",
   "item.noway_core.energy_output_port": "Energy Output Port",

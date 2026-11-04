@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>给方块登记“它是什么端口、什么等级”，供扫描、UI、JEI 与调试命令查询。方块实体本身仍需
  * 实现 {@link MultiblockPort} 及对应的资源接口。</p>
  */
-public final class PortRegistry {
+public class PortRegistry {
     private static final Map<Block, Descriptor> DESCRIPTORS = new ConcurrentHashMap<>();
 
     private PortRegistry() {

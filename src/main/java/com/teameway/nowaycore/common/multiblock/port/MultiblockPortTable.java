@@ -21,7 +21,7 @@ import java.util.Map;
  * <p>成型时扫描一次，之后只在部件增删时重建。同种类的端口会被合并成一个
  * {@link CombinedResourceHandler}，即“池”：容量相加、按槽序扣取。</p>
  */
-public final class MultiblockPortTable {
+public class MultiblockPortTable {
     private final Map<PortKind, List<MultiblockPort>> byKind;
     private final int portCount;
     private final int threads;

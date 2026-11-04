@@ -1,4 +1,4 @@
-package com.teameway.nowaycore.common.recipe;
+package com.teameway.nowaycore.recipe;
 
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.init.ModRecipeTypes;
@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * <p>不可变快照，配方重载时整体替换；{@link #version()} 变化即代表需要清理机器侧查询缓存。</p>
  */
-public final class MultiblockRecipeIndex {
+public class MultiblockRecipeIndex {
     private static final AtomicLong VERSION = new AtomicLong();
 
     private static volatile @Nullable MultiblockRecipeIndex current;
@@ -72,10 +72,10 @@ public final class MultiblockRecipeIndex {
             for (ResourceIngredient ingredient : recipe.inputs()) {
                 switch (ingredient) {
                     case ResourceIngredient.Items items -> {
-                        if (items.predicate().items().isEmpty()) {
+                        if (items.input().items().isEmpty()) {
                             wildcard = true;
                         } else {
-                            for (Holder<Item> item : items.predicate().items().orElseThrow()) {
+                            for (Holder<Item> item : items.input().items().orElseThrow()) {
                                 item.unwrapKey().ifPresent(key -> keys.add(new ResourceKey(ResourceKind.ITEM, key.identifier())));
                             }
                         }

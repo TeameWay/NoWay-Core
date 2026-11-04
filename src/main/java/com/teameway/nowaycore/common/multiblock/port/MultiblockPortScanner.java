@@ -14,7 +14,7 @@ import java.util.List;
  *
  * <p>只在成型/部件变化时调用，不要每 tick 扫。</p>
  */
-public final class MultiblockPortScanner {
+public class MultiblockPortScanner {
     private MultiblockPortScanner() {
     }
 
