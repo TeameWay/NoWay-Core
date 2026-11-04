@@ -19,7 +19,6 @@ import dev.anvilcraft.lib.v2.multiblock.init.LibRegistries;
 import dev.anvilcraft.lib.v2.registrum.util.entry.RegistryEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -255,20 +254,46 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
 
     /**
      * @param slot 线程序号
-     * @return 线程状态文本
+     * @return 当前配方的 ID，空闲时为空串
      */
-    public Component statusAt(int slot) {
+    public String recipeIdAt(int slot) {
         if (slot < 0 || slot >= this.threadRecipe.length) {
-            return Component.translatable("gui.noway_core.controller.idle");
+            return "";
         }
         String recipe = this.threadRecipe[slot];
-        if (recipe == null || recipe.isEmpty()) {
-            return Component.translatable("gui.noway_core.controller.idle");
+        return recipe == null ? "" : recipe;
+    }
+
+    /**
+     * @param slot 线程序号
+     * @return 当前配方的并行倍数，空闲时为 0
+     */
+    public int batchAt(int slot) {
+        return slot < 0 || slot >= this.threadBatch.length ? 0 : this.threadBatch[slot];
+    }
+
+    /**
+     * @param slot 线程序号
+     * @return 当前配方的单周期耗时，空闲时为 0
+     */
+    public int durationAt(int slot) {
+        return slot < 0 || slot >= this.threadDuration.length ? 0 : this.threadDuration[slot];
+    }
+
+    /**
+     * 判断机器是否正在处理任意一条配方
+     *
+     * <p>结构状态由这三个字段推导，不再单独同步：成型看机器类型，工作与否看有没有线程在跑配方。</p>
+     *
+     * @return 至少一个线程持有配方时为 true
+     */
+    public boolean working() {
+        for (String recipe : this.threadRecipe) {
+            if (recipe != null && !recipe.isEmpty()) {
+                return true;
+            }
         }
-        Identifier id = Identifier.tryParse(recipe);
-        return Component.translatable(
-            "gui.noway_core.controller.working", this.threadBatch[slot], id == null ? recipe : id.getPath()
-        );
+        return false;
     }
 
     @Override
