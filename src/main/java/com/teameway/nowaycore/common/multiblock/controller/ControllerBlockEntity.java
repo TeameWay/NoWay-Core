@@ -10,8 +10,10 @@ import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.common.multiblock.MultiblockType;
 import com.teameway.nowaycore.common.multiblock.machine.MachineJob;
 import com.teameway.nowaycore.common.multiblock.machine.MachineRuntime;
+import com.teameway.nowaycore.common.multiblock.port.MultiblockPort;
 import com.teameway.nowaycore.common.multiblock.port.MultiblockPortScanner;
 import com.teameway.nowaycore.common.multiblock.port.MultiblockPortTable;
+import com.teameway.nowaycore.common.multiblock.port.PortKind;
 import com.teameway.nowaycore.init.ModRegistries;
 import dev.anvilcraft.lib.v2.multiblock.dynamic.MultiblockState;
 import dev.anvilcraft.lib.v2.multiblock.dynamic.definition.MultiblockDefinition;
@@ -45,6 +47,19 @@ import java.util.stream.Collectors;
 public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRPCBlockEntity {
     private static final int FORM_RETRY_INTERVAL = 20;
     private static final int SAVE_INTERVAL = 20;
+    /**
+     * 端口摘要各段之间的分隔符
+     *
+     * <p>用竖线而不是逗号：坐标内部就是用逗号分三段，混用会让解析全靠位次。</p>
+     */
+    private static final char SEPARATOR = '|';
+    /**
+     * 解析端口摘要时用的分隔正则
+     *
+     * <p>{@link String split} 收的是正则，竖线在正则里是"或"的意思，
+     * 直接传 {@link #SEPARATOR} 会把字符串切成单个字符。</p>
+     */
+    private static final String SEPARATOR_REGEX = "\\|";
 
     private final FieldManagedStorage syncStorage = new FieldManagedStorage(this);
     private final List<MachineJob> pendingJobs = new ArrayList<>();
@@ -68,6 +83,19 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
     private String machineType = "";
     @DescSynced
     private String variantText = "";
+    /**
+     * 结构里所有端口的摘要，一项一个端口
+     *
+     * <p>格式为 {@code 种类|等级|x,y,z}，例如 {@code item_input|basic|100,64,-20}。
+     * 端口在成型时扫描一次，位置本身不会变，所以只在 {@link #form} 与 {@link #unform} 时更新。</p>
+     *
+     * <p>用字符串而不是三个平行数组：{@code String[]} 是本类已经在用的同步类型
+     * （见 {@link #threadRecipe}），而 {@code BlockPos[]} 会走 {@code DirectArrayRef} 的元素级引用，
+     * 该路径在当前 LDLib2 版本下抛 NPE。把坐标编进字符串既绕开了那条路径，
+     * 也让端口列表天然有序、不会出现三个数组长度对不上的情况。</p>
+     */
+    @DescSynced
+    private String[] ports = new String[0];
 
     /**
      * @param type  方块实体类型（注册时由构建器传入）
@@ -126,6 +154,7 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
             return;
         }
         MultiblockPortTable table = MultiblockPortScanner.scan(level, this.worldPosition, holder.value());
+        this.refreshPorts(table);
         MachineRuntime created = new MachineRuntime(type.getId(), holder);
         created.formed(table);
         if (!this.pendingJobs.isEmpty()) {
@@ -159,6 +188,7 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
             current.unformed();
             this.runtime = null;
             this.machineType = "";
+            this.clearPorts();
             this.refreshStatus();
             this.setChanged();
             this.sync(true);
@@ -170,6 +200,104 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
      */
     public @Nullable MachineRuntime runtime() {
         return this.runtime;
+    }
+
+    /**
+     * 把端口表摊平成三个平行数组，供客户端铺端口信息栏
+     *
+     * <p>平行数组而不是对象数组：托管同步对基本类型与 {@link BlockPos} 有现成的编解码器，
+     * 自定义记录类型要额外注册，为一个只读列表不值得。</p>
+     *
+     * @param table 端口表
+     */
+    private void refreshPorts(MultiblockPortTable table) {
+        List<String> entries = new ArrayList<>();
+        for (PortKind kind : PortKind.values()) {
+            for (MultiblockPort port : table.ports(kind)) {
+                // 只有方块实体才有位置；扫描器收集的都是方块实体，这里仍按接口取，避免强转
+                if (port instanceof BlockEntity entity) {
+                    BlockPos pos = entity.getBlockPos();
+                    entries.add(kind.getSerializedName() + SEPARATOR + port.tier().name()
+                                + SEPARATOR + pos.getX() + "," + pos.getY() + "," + pos.getZ());
+                }
+            }
+        }
+        this.ports = entries.toArray(String[]::new);
+    }
+
+    private void clearPorts() {
+        this.ports = new String[0];
+    }
+
+    /**
+     * @param index 序号
+     * @return 该端口的方块位置
+     */
+    public BlockPos portPosition(int index) {
+        return this.portAt(index).pos();
+    }
+
+    /**
+     * @param index 序号
+     * @return 该端口的种类
+     */
+    public PortKind portKind(int index) {
+        return PortKind.byName(this.portAt(index).kind());
+    }
+
+    /**
+     * @param index 序号
+     * @return 该端口的等级名，例如 {@code basic}
+     */
+    public String portTier(int index) {
+        return this.portAt(index).tier();
+    }
+
+    /**
+     * @return 端口数量
+     */
+    public int portCount() {
+        return this.ports.length;
+    }
+
+    /**
+     * 拆开一项端口摘要
+     *
+     * <p>格式由 {@link #refreshPorts} 写入，只有本类会产出，所以解析失败视为数据损坏：
+     * 退回到原点与物品输入，让界面还能显示出一行而不是整个崩掉。</p>
+     *
+     * @param index 序号
+     * @return 拆开后的三段
+     */
+    private PortEntry portAt(int index) {
+        String raw = this.ports[index];
+        String[] parts = raw.split(SEPARATOR_REGEX, 3);
+        if (parts.length != 3) {
+            return new PortEntry(PortKind.ITEM_INPUT.getSerializedName(), "", BlockPos.ZERO);
+        }
+        String[] coordinates = parts[2].split(",");
+        if (coordinates.length != 3) {
+            return new PortEntry(parts[0], parts[1], BlockPos.ZERO);
+        }
+        try {
+            return new PortEntry(
+                parts[0], parts[1], new BlockPos(
+                Integer.parseInt(coordinates[0]),
+                Integer.parseInt(coordinates[1]),
+                Integer.parseInt(coordinates[2])
+            )
+            );
+        } catch (NumberFormatException ignored) {
+            return new PortEntry(parts[0], parts[1], BlockPos.ZERO);
+        }
+    }
+
+    /**
+     * @param kind 种类名
+     * @param tier 等级名
+     * @param pos  位置
+     */
+    private record PortEntry(String kind, String tier, BlockPos pos) {
     }
 
     /**

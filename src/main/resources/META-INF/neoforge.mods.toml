@@ -23,7 +23,7 @@ version="${mod_version}"
 displayName="${mod_name}"
 displayURL = "https://github.com/TeameWay/NoWay-Core"
 issueTrackerURL = "https://github.com/TeameWay/NoWay-Core/issues"
-logoFile = "pack.png"
+iconFile = "logoFile.png"
 authors = "TeameWay Team"
 
 # The description text for the mod (multi line!) (#mandatory)

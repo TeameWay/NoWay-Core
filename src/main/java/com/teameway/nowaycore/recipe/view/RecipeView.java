@@ -23,12 +23,11 @@ import java.util.List;
 /**
  * 配方展示数据
  *
- * <p>把 {@link CompiledRecipe} 里的多态输入输出展平成界面直接可用的几组列表，排版与外观由调用方决定。
- * 配方页需要知道语义角色与概率来决定排布和悬浮提示，控制器界面只想知道“有什么、多少”，
- * 两者拿的是同一份展平结果，不会出现一处认得出、另一处认不出的情况。</p>
+ * <p>把 {@link CompiledRecipe} 里的多态输入输出展平成界面直接可用的几组列表。物品与流体各自携带
+ * 真实数量与对应堆栈：数量是 {@code long}，堆栈只用来取名称与图标。</p>
  *
  * <p>数量保留 {@code long}：配方可以要求上万亿，而物品堆栈只能存 {@code int}。
- * 堆栈里放的是截断后的值，仅用于承载物品种类与图标，真实数值由 {@link ItemEntry#amount()} 给出。</p>
+ * 堆栈里放的是截断后的值，仅用于承载物品种类，真实数值由 {@link ItemEntry#amount()} 给出。</p>
  *
  * @param itemInputs   物品输入
  * @param fluidInputs  流体输入
@@ -98,14 +97,16 @@ public record RecipeView(
                     long count = items.input().count();
                     items.input().items().ifPresent(set -> {
                         for (Holder<Item> holder : set) {
-                            itemInputs.add(new ItemEntry(new ItemStack(holder.value(), stackCount(count)), count, items.consumed(), 1.0F));
+                            itemInputs.add(new ItemEntry(
+                                new ItemStack(holder.value(), stackCount(count)), count
+                            ));
                         }
                     });
                 }
                 case ResourceIngredient.Fluids fluids -> {
                     int amount = fluids.ingredient().amount();
                     for (Holder<Fluid> holder : fluids.ingredient().ingredient().fluids()) {
-                        fluidInputs.add(new FluidEntry(FluidResource.of(holder).toStack(amount), fluids.consumed(), 1.0F));
+                        fluidInputs.add(new FluidEntry(FluidResource.of(holder).toStack(amount), amount));
                     }
                 }
                 case ResourceIngredient.Energy entry -> energy += entry.amount();
@@ -116,14 +117,15 @@ public record RecipeView(
                 case ResourceOutput.Items items -> {
                     int amount = constant(items.amount());
                     itemOutputs.add(new ItemEntry(
-                        ItemResource.of(items.template()).toStack(Math.max(1, amount)),
-                        amount, true, items.chance()
+                        ItemResource.of(items.template()).toStack(Math.max(1, amount)), amount
                     ));
                 }
-                case ResourceOutput.Fluids fluids -> fluidOutputs.add(new FluidEntry(
-                    FluidResource.of(fluids.fluid()).toStack(Math.max(1, constant(fluids.amount()))),
-                    true, fluids.chance()
-                ));
+                case ResourceOutput.Fluids fluids -> {
+                    int amount = constant(fluids.amount());
+                    fluidOutputs.add(new FluidEntry(
+                        FluidResource.of(fluids.fluid()).toStack(Math.max(1, amount)), amount
+                    ));
+                }
                 case ResourceOutput.Energy ignored -> {
                     // 产出的能量不进展示：界面关心的是这条配方要花掉多少，而不是它能回收多少
                 }
@@ -135,7 +137,7 @@ public record RecipeView(
     /**
      * 把 {@code long} 需求量压进物品堆栈的数量字段
      *
-     * <p>堆栈的数量是 {@code int}，直接塞入超出范围的值会截断成负数，整个堆栈随之判空、槽位变成空位。
+     * <p>堆栈的数量是 {@code int}，直接塞入超出范围的值会截断成负数，整个堆栈随之判空。
      * 这里只用于承载“有这个物品”这件事，真实数量由 {@link ItemEntry#amount()} 另行携带。</p>
      *
      * @param amount 需求量
@@ -150,19 +152,28 @@ public record RecipeView(
     }
 
     /**
-     * @param stack    槽位展示的物品，数量已被压进 {@code int}
-     * @param amount   真实需求量或产出量，可能超出堆栈能表达的范围
-     * @param consumed 是否消耗，产出恒为 {@code true}
-     * @param chance   产出概率，输入恒为 1
+     * @param stack  槽位展示的物品，数量已被压进 {@code int}
+     * @param amount 真实需求量或产出量，可能超出堆栈能表达的范围
      */
-    public record ItemEntry(ItemStack stack, long amount, boolean consumed, float chance) {
+    public record ItemEntry(ItemStack stack, long amount) {
+        /**
+         * @return 物品名称
+         */
+        public String name() {
+            return this.stack.getHoverName().getString();
+        }
     }
 
     /**
-     * @param stack    槽位展示的流体
-     * @param consumed 是否消耗，产出恒为 {@code true}
-     * @param chance   产出概率，输入恒为 1
+     * @param stack  流体堆栈，用于取名称与图标
+     * @param amount 真实需求量或产出量，单位 mB
      */
-    public record FluidEntry(FluidStack stack, boolean consumed, float chance) {
+    public record FluidEntry(FluidStack stack, long amount) {
+        /**
+         * @return 流体名称
+         */
+        public String name() {
+            return this.stack.getHoverName().getString();
+        }
     }
 }

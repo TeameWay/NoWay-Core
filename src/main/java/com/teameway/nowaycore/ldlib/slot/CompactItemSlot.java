@@ -182,7 +182,7 @@ public class CompactItemSlot extends ItemSlot {
     public List<Component> getFullTooltipTexts(boolean withItemTooltips) {
         List<Component> tooltips = new ArrayList<>(super.getFullTooltipTexts(withItemTooltips));
         // 始终显示数量
-        tooltips.add(Component.translatable("gui.noway_core.slot.count", Long.toString(this.count()))
+        tooltips.add(Component.translatable("gui.noway_core.slot.count", NumberFormatUtil.grouped(amount))
             .withStyle(ChatFormatting.GRAY));
         return tooltips;
     }
@@ -202,7 +202,7 @@ public class CompactItemSlot extends ItemSlot {
         String text = NumberFormatUtil.compact(count);
         Font font = LDFonts.font();
         float width = font.width(text);
-        float scale = Math.min(1.0F, TEXT_RIGHT / width);
+        float scale = Math.min(0.75F, TEXT_RIGHT / width);
         var pose = guiContext.pose;
         pose.pushPose();
         // 右边缘与下边缘固定，缩放后文字仍然贴着格子右下角

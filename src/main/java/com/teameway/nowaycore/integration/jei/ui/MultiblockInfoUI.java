@@ -2,16 +2,15 @@ package com.teameway.nowaycore.integration.jei.ui;
 
 import com.lowdragmc.lowdraglib2.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
-import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.data.ScrollDisplay;
 import com.lowdragmc.lowdraglib2.gui.ui.data.ScrollerMode;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Scene;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ScrollerView;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
 import com.lowdragmc.lowdraglib2.integration.xei.IngredientIO;
 import com.teameway.nowaycore.common.multiblock.MultiblockType;
+import com.teameway.nowaycore.gui.NowayTheme;
 import com.teameway.nowaycore.integration.jei.layout.JeiLayout;
 import com.teameway.nowaycore.integration.jei.layout.StructureLayout;
 import com.teameway.nowaycore.ldlib.slot.CompactItemSlot;
@@ -73,7 +72,7 @@ public class MultiblockInfoUI {
         content.addChild(selected);
         addStrip(content, blocks, layout.stripTop());
 
-        ModularUI ui = ModularUI.of(UI.of(root, StylesheetManager.MC));
+        ModularUI ui = ModularUI.of(NowayTheme.of(root));
         ui.setDrawTooltips(true);
         return ui;
     }

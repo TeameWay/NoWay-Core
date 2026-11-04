@@ -3,26 +3,23 @@ package com.teameway.nowaycore.common.multiblock.port.block;
 import com.lowdragmc.lowdraglib2.gui.factory.BlockUIMenuType;
 import com.lowdragmc.lowdraglib2.gui.sync.bindings.impl.SupplierDataSource;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
-import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.FluidSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ProgressBar;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
 import com.teameway.nowaycore.common.multiblock.port.EnergyPort;
 import com.teameway.nowaycore.common.multiblock.port.FluidPort;
 import com.teameway.nowaycore.common.multiblock.port.ItemPort;
 import com.teameway.nowaycore.common.multiblock.port.MultiblockPort;
 import com.teameway.nowaycore.common.multiblock.port.block.entity.EnergyPortBlockEntity;
+import com.teameway.nowaycore.gui.NowayTheme;
 import dev.vfyjxf.taffy.style.FlexDirection;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemResource;
-
-import java.util.List;
 
 /**
  * 端口界面
@@ -69,7 +66,7 @@ public class PortUI {
             .height(PADDING * 2 + LINE + GAP + body.height()));
 
         return new ModularUI(
-            UI.of(root, List.of(StylesheetManager.INSTANCE.getStylesheetSafe(StylesheetManager.MC))),
+            NowayTheme.of(root),
             holder.player
         );
     }

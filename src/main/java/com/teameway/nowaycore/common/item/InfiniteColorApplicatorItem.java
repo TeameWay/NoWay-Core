@@ -15,16 +15,15 @@ import appeng.items.tools.powered.ColorApplicatorItem;
 import appeng.util.Platform;
 import com.lowdragmc.lowdraglib2.gui.factory.HeldItemUIMenuType;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
-import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.event.UIEvents;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
 import com.lowdragmc.lowdraglib2.networking.rpc.RPCPacket;
 import com.lowdragmc.lowdraglib2.networking.rpc.RPCPacketDistributor;
 import com.lowdragmc.lowdraglib2.syncdata.rpc.RPCSender;
 import com.teameway.nowaycore.NoWayCore;
+import com.teameway.nowaycore.gui.NowayTheme;
 import com.teameway.nowaycore.util.StyleUtil;
 import dev.vfyjxf.taffy.style.FlexDirection;
 import net.minecraft.core.BlockPos;
@@ -230,7 +229,7 @@ public class InfiniteColorApplicatorItem extends ColorApplicatorItem implements 
             root.addChild(row);
         }
 
-        return new ModularUI(UI.of(root, StylesheetManager.INSTANCE.getStylesheetSafe(StylesheetManager.MODERN)), holder.player);
+        return new ModularUI(NowayTheme.of(root), holder.player);
     }
 
     @Override
