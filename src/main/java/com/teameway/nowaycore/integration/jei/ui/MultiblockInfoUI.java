@@ -1,126 +1,136 @@
 package com.teameway.nowaycore.integration.jei.ui;
 
+import com.lowdragmc.lowdraglib2.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
+import com.lowdragmc.lowdraglib2.gui.ui.data.ScrollDisplay;
+import com.lowdragmc.lowdraglib2.gui.ui.data.ScrollerMode;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Scene;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
+import com.lowdragmc.lowdraglib2.gui.ui.elements.ScrollerView;
 import com.lowdragmc.lowdraglib2.integration.xei.IngredientIO;
 import com.teameway.nowaycore.common.multiblock.MultiblockType;
-import dev.vfyjxf.taffy.style.AlignContent;
-import dev.vfyjxf.taffy.style.AlignItems;
+import com.teameway.nowaycore.integration.jei.layout.StructureLayout;
 import dev.vfyjxf.taffy.style.FlexDirection;
-import dev.vfyjxf.taffy.style.FlexWrap;
+import dev.vfyjxf.taffy.style.TaffyPosition;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
-import java.util.List;
 import java.util.Map;
 
 /**
- * 结构信息分类的预览界面
+ * 结构信息页
  *
- * <p>上半部分是结构所需方块，按每行三格排列并显示数量；下半部分是三维预览。
- * 方块清单按内容计算高度并保持固定尺寸，预览区域占用剩余空间，
- * 因此方块种类增多时清单向上扩展，不会被预览挤掉后面的行。</p>
+ * <p>左上角的单格显示玩家在预览里点中的方块；中部预览以控制器为中心；底部横排清单列出结构
+ * 所需的全部方块与数量，种类多时横向滚动。</p>
+ *
+ * <p>清单与单格都注册成 JEI 输入原料，因此在 JEI 里查任意一种结构方块都能跳回该结构。</p>
  */
 public class MultiblockInfoUI {
-    public static final int WIDTH = 176;
-    /**
-     * 结构缺失时使用的界面高度。
-     */
-    public static final int EMPTY_HEIGHT = 120;
-    private static final int LINE = 10;
-    private static final int SLOT = 18;
-    private static final int GAP = 3;
-    private static final int PANEL_PADDING = 5;
-    private static final int COLUMNS = 3;
-    private static final int PREVIEW_HEIGHT = 96;
 
     private MultiblockInfoUI() {
     }
 
     /**
-     * 计算该结构界面所需的高度
+     * 构建结构信息界面
      *
-     * @param blocks 结构所需方块及数量
-     * @return 界面高度
-     */
-    public static int heightFor(Map<Block, Integer> blocks) {
-        return PANEL_PADDING * 2 + LINE + GAP + PREVIEW_HEIGHT + GAP + listHeight(blocks.size());
-    }
-
-    /**
      * @param type   机器类型
      * @param blocks 结构所需方块及数量
-     * @param height 该结构界面高度，由 {@link #heightFor} 算出
      * @return 供 JEI 显示的界面
      */
-    public static ModularUI create(MultiblockType type, Map<Block, Integer> blocks, int height) {
+    public static ModularUI create(MultiblockType type, Map<Block, Integer> blocks) {
+        StructureLayout layout = StructureLayout.INSTANCE;
+        int height = layout.height();
+        int contentHeight = height - JeiLayout.PANEL_PADDING * 2;
+
         UIElement root = new UIElement()
-            .layout(layout -> layout
-                .width(WIDTH)
+            .layout(l -> l
+                .width(JeiLayout.PANEL_WIDTH)
                 .height(height)
-                .flexDirection(FlexDirection.COLUMN)
-                .gapAll(GAP))
+                .paddingAll(JeiLayout.PANEL_PADDING))
             .addClass("panel_bg");
 
-        Label title = new Label();
-        title.setText(type.controller().get().getBlock().getName());
-        title.layout(layout -> layout.widthPercent(100).height(LINE));
+        UIElement content = new UIElement()
+            .layout(l -> l.width(JeiLayout.CONTENT_WIDTH).height(contentHeight));
+        root.addChild(content);
 
-        root.addChildren(title, preview(type), blockList(blocks));
-        return ModularUI.of(UI.of(
-            root, List.of(
-                StylesheetManager.INSTANCE.getStylesheetSafe(StylesheetManager.MC)
-            )
-        ));
-    }
+        ItemSlot selected = new ItemSlot();
+        selected.layout(l -> l
+            .positionType(TaffyPosition.ABSOLUTE)
+            .left(0)
+            .top(0)
+            .width(JeiLayout.SLOT)
+            .height(JeiLayout.SLOT));
 
-    private static int listHeight(int kinds) {
-        int rows = (kinds + COLUMNS - 1) / COLUMNS;
-        return rows * SLOT + Math.max(0, rows - 1);
-    }
+        addScene(content, type, selected);
+        content.addChild(selected);
+        addStrip(content, blocks, layout.stripTop());
 
-    private static UIElement preview(MultiblockType type) {
-        UIElement container = new UIElement().layout(layout -> layout
-            .widthPercent(100)
-            .height(PREVIEW_HEIGHT)
-            .flexDirection(FlexDirection.COLUMN)
-            .alignItems(AlignItems.CENTER)
-            .justifyContent(AlignContent.CENTER));
-        Scene scene = MultiblockPreview.create(type);
-        if (scene != null) {
-            scene.layout(layout -> layout.widthPercent(100).heightPercent(100));
-            container.addChild(scene);
-            return container;
-        }
-        Label missing = new Label();
-        missing.setText(Component.translatable("gui.noway_core.jei.no_structure"));
-        missing.layout(layout -> layout.height(LINE));
-        container.addChild(missing);
-        return container;
+        ModularUI ui = ModularUI.of(UI.of(root, JeiLayout.stylesheets()));
+        ui.setDrawTooltips(true);
+        return ui;
     }
 
     /**
-     * 方块清单，每行三格，高度由 {@link #listHeight} 给出，不参与剩余空间分配。
+     * 中部预览，点击方块时把该方块写进左上角的单格
      */
-    private static UIElement blockList(Map<Block, Integer> blocks) {
-        UIElement row = new UIElement().layout(layout -> layout
-            .widthPercent(100)
-            .height(listHeight(blocks.size()))
-            .flexDirection(FlexDirection.ROW)
-            .wrap(FlexWrap.WRAP)
-            .gapAll(1));
+    private static void addScene(UIElement content, MultiblockType type, ItemSlot selected) {
+        Scene scene = MultiblockPreview.create(type);
+        if (scene == null) {
+            Label missing = JeiLayout.label(Component.translatable("gui.noway_core.jei.no_structure"));
+            missing.layout(l -> l
+                .positionType(TaffyPosition.ABSOLUTE)
+                .left(0)
+                .top(StructureLayout.PREVIEW_HEIGHT / 2)
+                .width(JeiLayout.CONTENT_WIDTH));
+            content.addChild(missing);
+            return;
+        }
+        scene.setOnSelected((pos, facing) -> {
+            Block block = MultiblockPreview.blockAt(type, pos);
+            if (block != null) {
+                selected.setItem(new ItemStack(block.asItem()));
+            }
+        });
+        scene.layout(l -> l
+            .positionType(TaffyPosition.ABSOLUTE)
+            .left(0)
+            .top(0)
+            .width(JeiLayout.CONTENT_WIDTH)
+            .height(StructureLayout.PREVIEW_HEIGHT));
+        content.addChild(scene);
+    }
+
+    /**
+     * 底部横排清单，横向滚动
+     */
+    private static void addStrip(UIElement content, Map<Block, Integer> blocks, int top) {
+        ScrollerView strip = new ScrollerView();
+        UIElement row = new UIElement().layout(l -> l.flexDirection(FlexDirection.ROW).gapAll(JeiLayout.SLOT_GAP));
         blocks.forEach((block, count) -> {
             ItemSlot slot = new ItemSlot();
             slot.setItem(new ItemStack(block.asItem(), count));
             slot.xeiRecipeIngredient(IngredientIO.INPUT);
+            slot.layout(l -> l.width(JeiLayout.SLOT).height(JeiLayout.SLOT));
             row.addChild(slot);
         });
-        return row;
+        strip.addScrollViewChild(row);
+        strip.viewPort(viewPort -> viewPort
+                .style(style -> style.backgroundTexture(IGuiTexture.EMPTY))
+                .layout(l -> l.paddingAll(0)))
+            .viewContainer(viewContainer -> viewContainer.layout(l -> l.flexDirection(FlexDirection.ROW)))
+            .scrollerStyle(style -> style
+                .mode(ScrollerMode.HORIZONTAL)
+                .horizontalScrollDisplay(ScrollDisplay.AUTO))
+            .layout(l -> l
+                .positionType(TaffyPosition.ABSOLUTE)
+                .left(0)
+                .top(top)
+                .width(JeiLayout.CONTENT_WIDTH)
+                .height(StructureLayout.STRIP_HEIGHT));
+        content.addChild(strip);
     }
 }

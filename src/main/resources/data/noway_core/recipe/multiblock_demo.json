@@ -10,6 +10,27 @@
         "items": "minecraft:iron_ingot",
         "count": 2
       }
+    },
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:iron_ingot",
+        "count": 32
+      }
+    },
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:copper_ingot",
+        "count": 64
+      }
+    },
+    {
+      "type": "item",
+      "items": {
+        "items": "minecraft:stone",
+        "count": 114514
+      }
     }
   ],
   "outputs": [

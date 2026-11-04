@@ -1,333 +1,229 @@
 package com.teameway.nowaycore.integration.jei.ui;
 
-import com.lowdragmc.lowdraglib2.gui.texture.Icons;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.FluidSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.ItemSlot;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
-import com.lowdragmc.lowdraglib2.integration.xei.IngredientIO;
 import com.teameway.nowaycore.common.recipe.CompiledRecipe;
-import com.teameway.nowaycore.resource.ResourceIngredient;
-import com.teameway.nowaycore.resource.ResourceOutput;
-import dev.vfyjxf.taffy.style.AlignContent;
-import dev.vfyjxf.taffy.style.AlignItems;
-import dev.vfyjxf.taffy.style.FlexDirection;
-import dev.vfyjxf.taffy.style.FlexWrap;
-import net.minecraft.core.Holder;
+import com.teameway.nowaycore.integration.jei.layout.RecipeLayout;
+import com.teameway.nowaycore.integration.jei.ui.widget.Arrow;
+import dev.vfyjxf.taffy.style.TaffyPosition;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.storage.loot.providers.number.ints.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.transfer.fluid.FluidResource;
-import net.neoforged.neoforge.transfer.item.ItemResource;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Function;
 
 /**
- * JEI 配方界面
+ * 配方页
  *
- * <p>沿用 GTM 配方页的三段式结构：左输入列、中间箭头、右输出列，列内材料按每行三格排布，
- * 耗时与能量放在底部文字行。分类高度由 {@link #heightFor} 按该分类最大的配方算出，
- * 槽位多的分类自动变高，槽位少的分类不留空白。</p>
+ * <p>排版为三段：中部输入列、箭头、输出列，底部三行数值。两列紧贴箭头，箭头中心固定落在
+ * 面板水平中线上，因此输入输出天然对称；槽位少的一侧向箭头靠拢而不是整体居中。</p>
+ *
+ * <p>所有元素都用绝对坐标摆放：JEI 通过元素的局部坐标反查槽位，绝对定位让坐标只由下标决定，
+ * 不会因为相邻元素变化而漂移。</p>
  */
 public class MultiblockRecipeUI {
-    public static final int WIDTH = 176;
-    private static final int GAP = 4;
-    private static final int LINE = 10;
-    /**
-     * {@code panel_bg} 样式类施加的内边距，界面高度计算需要计入。
-     */
-    private static final int PANEL_PADDING = 5;
-    private static final int SLOT = 18;
-    private static final int GROUP_GAP = 2;
-    private static final int COLUMN_WIDTH = SLOT * 3 + 2;
-    private static final int ARROW_SIZE = 12;
 
     private MultiblockRecipeUI() {
     }
 
     /**
-     * 计算该分类显示这些配方所需的高度
+     * 计算该分类的统一排版
      *
      * @param recipes 该分类的配方
-     * @return 界面高度
+     * @return 排版
      */
-    public static int heightFor(List<CompiledRecipe> recipes) {
-        int body = SLOT;
+    public static RecipeLayout layoutFor(List<CompiledRecipe> recipes) {
+        List<RecipeContents> contents = new ArrayList<>(recipes.size());
         for (CompiledRecipe recipe : recipes) {
-            Contents contents = Contents.of(recipe);
-            body = Math.max(
-                body, Math.max(
-                    columnHeight(contents.itemInputs(), contents.fluidInputs()),
-                    columnHeight(contents.itemOutputs(), contents.fluidOutputs())
-                )
-            );
+            contents.add(RecipeContents.of(recipe));
         }
-        return PANEL_PADDING * 2 + body + GAP + LINE;
+        return RecipeLayout.of(contents);
     }
 
     /**
      * 构建配方界面
      *
      * @param recipe 编译后的配方
-     * @param height 分类高度，由 {@link #heightFor} 统一算出
+     * @param layout 该分类的统一排版
      * @return 供 JEI 显示的界面
      */
-    public static ModularUI create(CompiledRecipe recipe, int height) {
-        Contents contents = Contents.of(recipe);
+    public static ModularUI create(CompiledRecipe recipe, RecipeLayout layout) {
+        RecipeContents contents = RecipeContents.of(recipe);
+        int height = layout.height();
+        int contentHeight = height - JeiLayout.PANEL_PADDING * 2;
 
         UIElement root = new UIElement()
-            .layout(layout -> layout
-                .width(WIDTH)
+            .layout(l -> l
+                .width(JeiLayout.PANEL_WIDTH)
                 .height(height)
-                .flexDirection(FlexDirection.COLUMN)
-                .gapAll(GAP))
+                .paddingAll(JeiLayout.PANEL_PADDING))
             .addClass("panel_bg");
 
-        UIElement body = new UIElement().layout(layout -> layout
-            .widthPercent(100)
-            .flex(1)
-            .flexDirection(FlexDirection.ROW)
-            .alignItems(AlignItems.CENTER)
-            .justifyContent(AlignContent.SPACE_BETWEEN));
+        UIElement content = new UIElement()
+            .layout(l -> l.width(JeiLayout.CONTENT_WIDTH).height(contentHeight));
+        root.addChild(content);
 
-        body.addChildren(
-            column(contents.itemInputs(), contents.fluidInputs()),
-            arrow(),
-            column(contents.itemOutputs(), contents.fluidOutputs())
+        int columns = layout.columns();
+        int inputHeight = contents.inputHeight(columns);
+        int outputHeight = contents.outputHeight(columns);
+
+        addColumn(
+            content,
+            toItemSlots(contents.itemInputs()),
+            toFluidSlots(contents.fluidInputs()),
+            layout.inputLeft(),
+            layout.columnTop(inputHeight),
+            columns,
+            true
         );
+        addColumn(
+            content,
+            toItemSlots(contents.itemOutputs()),
+            toFluidSlots(contents.fluidOutputs()),
+            layout.outputLeft(),
+            layout.columnTop(outputHeight),
+            columns,
+            false
+        );
+        Arrow.centerIn(content, layout.arrowTop(), recipe.time());
 
-        root.addChildren(body, footer(recipe, contents.energyInput(), contents.energyOutput()));
+        addTexts(content, recipe, contents.energyInput(), layout.textTop());
 
-        ModularUI ui = ModularUI.of(UI.of(
-            root, List.of(StylesheetManager.INSTANCE.getStylesheetSafe(StylesheetManager.MC))
-        ));
+        ModularUI ui = ModularUI.of(UI.of(root, JeiLayout.stylesheets()));
         ui.setDrawTooltips(true);
         return ui;
     }
 
-    private static int columnHeight(List<SlotItem> items, List<SlotFluid> fluids) {
-        int height = 0;
+    /**
+     * 摆放一列：物品组在上、流体组在下，空组不占位
+     *
+     * <p>每一行都朝箭头一侧对齐，不足一行时空位留在外侧。</p>
+     *
+     * @param hugEnd 是否靠箭头一侧对齐；输入列在箭头左侧，靠右对齐，输出列相反
+     */
+    private static void addColumn(
+        UIElement content,
+        List<UIElement> items,
+        List<UIElement> fluids,
+        int left,
+        int top,
+        int columns,
+        boolean hugEnd
+    ) {
+        int y = top;
         if (!items.isEmpty()) {
-            height += rows(items.size()) * SLOT;
+            place(content, items, left, y, columns, hugEnd);
+            y += JeiLayout.gridHeight(items.size(), columns) + 2;
         }
         if (!fluids.isEmpty()) {
-            height += (height > 0 ? GROUP_GAP : 0) + rows(fluids.size()) * SLOT;
+            place(content, fluids, left, y, columns, hugEnd);
         }
-        return height;
-    }
-
-    private static int rows(int count) {
-        return (count + 2) / 3;
     }
 
     /**
-     * 一列材料：物品在上、流体在下，空分组不占位。
+     * 按网格逐个摆放槽位
+     *
+     * <p>每一行都朝箭头一侧对齐：不足一行时，靠箭头的那一端先占满，空出来的格子留在外侧。
+     * 这样槽位少的配方也不会跑到另一条配方的槽位位置上。</p>
+     *
+     * @param hugEnd 是否靠右侧对齐，输入列为 {@code true}
      */
-    private static UIElement column(List<SlotItem> items, List<SlotFluid> fluids) {
-        UIElement column = new UIElement().layout(layout -> layout
-            .width(COLUMN_WIDTH)
-            .flexDirection(FlexDirection.COLUMN)
-            .gapAll(GROUP_GAP));
-        if (!items.isEmpty()) {
-            column.addChild(grid(items, MultiblockRecipeUI::itemSlot));
+    private static void place(
+        UIElement content,
+        List<UIElement> slots,
+        int left,
+        int top,
+        int columns,
+        boolean hugEnd
+    ) {
+        for (int index = 0; index < slots.size(); index++) {
+            int row = index / columns;
+            int inRow = Math.min(columns, slots.size() - row * columns);
+            int column = index % columns;
+            if (hugEnd) {
+                column += columns - inRow;
+            }
+            float x = left + column * (JeiLayout.SLOT + JeiLayout.SLOT_GAP);
+            float y = top + row * (JeiLayout.SLOT + JeiLayout.SLOT_GAP);
+            UIElement slot = slots.get(index);
+            slot.layout(l -> l
+                .positionType(TaffyPosition.ABSOLUTE)
+                .left(x)
+                .top(y)
+                .width(JeiLayout.SLOT)
+                .height(JeiLayout.SLOT));
+            content.addChild(slot);
         }
-        if (!fluids.isEmpty()) {
-            column.addChild(grid(fluids, MultiblockRecipeUI::fluidSlot));
-        }
-        return column;
     }
 
     /**
-     * 把一组槽位按每行三格排列，宽度恰好容纳三格，第四格起换行。
+     * 底部三行：耗时、总耗能、耗能功率
      */
-    private static <T> UIElement grid(List<T> values, Function<T, UIElement> slotFactory) {
-        UIElement row = new UIElement().layout(layout -> layout
-            .width(COLUMN_WIDTH)
-            .flexDirection(FlexDirection.ROW)
-            .wrap(FlexWrap.WRAP)
-            .gapAll(1));
-        for (T value : values) {
-            row.addChild(slotFactory.apply(value));
-        }
-        return row;
-    }
+    private static void addTexts(UIElement content, CompiledRecipe recipe, long energy, int top) {
+        // 功率按每 tick 消耗计，向上取整，避免整除后显示 0 而实际有消耗
+        long power = energy <= 0 ? 0L : Math.ceilDiv(energy, Math.max(1, recipe.time()));
 
-    private static UIElement arrow() {
-        return new UIElement()
-            .layout(layout -> layout
-                .width(SLOT)
-                .heightPercent(100)
-                .flexDirection(FlexDirection.COLUMN)
-                .alignItems(AlignItems.CENTER)
-                .justifyContent(AlignContent.CENTER))
-            .addChild(new UIElement()
-                .layout(layout -> layout.width(ARROW_SIZE).height(ARROW_SIZE))
-                .style(style -> style.backgroundTexture(Icons.RIGHT_ARROW_NO_BAR)));
-    }
-
-    /**
-     * 物品槽，{@code chance} 小于 1 时作为概率槽注册并把概率写进提示。
-     */
-    private static ItemSlot itemSlot(SlotItem entry) {
-        ItemSlot slot = new ItemSlot();
-        slot.setItem(entry.stack());
-        if (entry.chance() < 1.0F) {
-            slot.xeiRecipeSlot(entry.io(), entry.chance());
-            slot.style(style -> style.appendTooltips(chanceTooltip(entry.chance())));
-        } else {
-            slot.xeiRecipeIngredient(entry.io());
-        }
-        return slot;
-    }
-
-    /**
-     * 流体槽，{@code chance} 小于 1 时作为概率槽注册并把概率写进提示。
-     */
-    private static FluidSlot fluidSlot(SlotFluid entry) {
-        FluidSlot slot = new FluidSlot();
-        slot.setFluid(entry.stack());
-        if (entry.chance() < 1.0F) {
-            slot.xeiRecipeSlot(entry.io(), entry.chance());
-            slot.style(style -> style.appendTooltips(chanceTooltip(entry.chance())));
-        } else {
-            slot.xeiRecipeIngredient(entry.io());
-        }
-        return slot;
-    }
-
-    private static UIElement footer(CompiledRecipe recipe, long energyInput, long energyOutput) {
-        UIElement footer = new UIElement().layout(layout -> layout
-            .widthPercent(100)
-            .height(LINE)
-            .flexDirection(FlexDirection.ROW)
-            .alignItems(AlignItems.CENTER)
-            .gapAll(6));
-
-        Label time = new Label();
-        time.setText(Component.translatable(
+        Label time = JeiLayout.label(Component.translatable(
             "gui.noway_core.jei.time", String.format(Locale.ROOT, "%.1f", recipe.time() / 20.0F)
         ));
-        time.layout(layout -> layout.height(LINE));
-        footer.addChild(time);
+        Label total = JeiLayout.label(Component.translatable("gui.noway_core.jei.energy_total", energy));
+        Label rate = JeiLayout.label(Component.translatable("gui.noway_core.jei.energy_rate", power));
 
-        if (energyInput > 0 || energyOutput > 0) {
-            Label energy = new Label();
-            energy.setText(Component.translatable(
-                "gui.noway_core.jei.energy", energyInput > 0 ? energyInput : energyOutput
-            ));
-            energy.layout(layout -> layout.height(LINE));
-            footer.addChild(energy);
-        }
-        return footer;
+        int line = JeiLayout.LINE + JeiLayout.LINE_GAP;
+        labelAt(content, time, top);
+        labelAt(content, total, top + line);
+        labelAt(content, rate, top + line * 2);
     }
 
-    private static int constant(ContextIntProvider provider) {
-        return provider instanceof ConstantValue(int value1) ? value1 : 1;
+    private static void labelAt(UIElement content, Label label, int top) {
+        label.layout(l -> l
+            .positionType(TaffyPosition.ABSOLUTE)
+            .left(0)
+            .top(top)
+            .width(JeiLayout.CONTENT_WIDTH)
+            .height(JeiLayout.LINE));
+        content.addChild(label);
+    }
+
+    private static List<UIElement> toItemSlots(List<RecipeContents.SlotItem> entries) {
+        List<UIElement> slots = new ArrayList<>(entries.size());
+        for (RecipeContents.SlotItem entry : entries) {
+            ItemSlot slot = new ItemSlot();
+            slot.setItem(entry.stack());
+            if (entry.chance() < 1.0F) {
+                slot.xeiRecipeSlot(entry.io(), entry.chance());
+                slot.style(style -> style.appendTooltips(chanceTooltip(entry.chance())));
+            } else {
+                slot.xeiRecipeIngredient(entry.io());
+            }
+            slots.add(slot);
+        }
+        return slots;
+    }
+
+    private static List<UIElement> toFluidSlots(List<RecipeContents.SlotFluid> entries) {
+        List<UIElement> slots = new ArrayList<>(entries.size());
+        for (RecipeContents.SlotFluid entry : entries) {
+            FluidSlot slot = new FluidSlot();
+            slot.setFluid(entry.stack());
+            if (entry.chance() < 1.0F) {
+                slot.xeiRecipeSlot(entry.io(), entry.chance());
+                slot.style(style -> style.appendTooltips(chanceTooltip(entry.chance())));
+            } else {
+                slot.xeiRecipeIngredient(entry.io());
+            }
+            slots.add(slot);
+        }
+        return slots;
     }
 
     private static Component chanceTooltip(float chance) {
         return Component.translatable(
             "gui.noway_core.jei.chance", String.format(Locale.ROOT, "%.1f%%", chance * 100.0F)
         );
-    }
-
-    /**
-     * 配方拆出的四组槽位与两种能量，高度计算与界面搭建共用同一份结果。
-     *
-     * @param itemInputs   物品输入
-     * @param fluidInputs  流体输入
-     * @param itemOutputs  物品产出
-     * @param fluidOutputs 流体产出
-     * @param energyInput  输入能量合计
-     * @param energyOutput 产出能量合计
-     */
-    private record Contents(
-        List<SlotItem> itemInputs,
-        List<SlotFluid> fluidInputs,
-        List<SlotItem> itemOutputs,
-        List<SlotFluid> fluidOutputs,
-        long energyInput,
-        long energyOutput
-    ) {
-        static Contents of(CompiledRecipe compiled) {
-            List<SlotItem> itemInputs = new ArrayList<>();
-            List<SlotFluid> fluidInputs = new ArrayList<>();
-            long energyInput = 0L;
-            List<SlotItem> itemOutputs = new ArrayList<>();
-            List<SlotFluid> fluidOutputs = new ArrayList<>();
-            long energyOutput = 0L;
-
-            for (ResourceIngredient ingredient : compiled.recipe().inputs()) {
-                switch (ingredient) {
-                    case ResourceIngredient.Items items -> itemInputs.addAll(inputItems(items));
-                    case ResourceIngredient.Fluids fluids -> fluidInputs.addAll(inputFluids(fluids));
-                    case ResourceIngredient.Energy energy -> energyInput += energy.amount();
-                }
-            }
-            for (ResourceOutput output : compiled.recipe().outputs()) {
-                switch (output) {
-                    case ResourceOutput.Items items -> itemOutputs.add(new SlotItem(
-                        ItemResource.of(items.template()).toStack(constant(items.amount())),
-                        IngredientIO.OUTPUT,
-                        items.chance()
-                    ));
-                    case ResourceOutput.Fluids fluids -> fluidOutputs.add(new SlotFluid(
-                        FluidResource.of(fluids.fluid()).toStack(constant(fluids.amount())),
-                        IngredientIO.OUTPUT,
-                        fluids.chance()
-                    ));
-                    case ResourceOutput.Energy energy -> energyOutput += constant(energy.amount());
-                }
-            }
-            return new Contents(itemInputs, fluidInputs, itemOutputs, fluidOutputs, energyInput, energyOutput);
-        }
-
-        private static List<SlotItem> inputItems(ResourceIngredient.Items items) {
-            List<SlotItem> stacks = new ArrayList<>();
-            int count = items.predicate().count();
-            IngredientIO io = items.consumed() ? IngredientIO.INPUT : IngredientIO.CATALYST;
-            items.predicate().items().ifPresent(set -> {
-                for (Holder<Item> holder : set) {
-                    stacks.add(new SlotItem(new ItemStack(holder.value(), count), io, 1.0F));
-                }
-            });
-            return stacks;
-        }
-
-        private static List<SlotFluid> inputFluids(ResourceIngredient.Fluids fluids) {
-            List<SlotFluid> resources = new ArrayList<>();
-            int amount = fluids.ingredient().amount();
-            IngredientIO io = fluids.consumed() ? IngredientIO.INPUT : IngredientIO.CATALYST;
-            for (Holder<Fluid> holder : fluids.ingredient().ingredient().fluids()) {
-                resources.add(new SlotFluid(FluidResource.of(holder).toStack(amount), io, 1.0F));
-            }
-            return resources;
-        }
-    }
-
-    /**
-     * @param stack  槽位展示的物品
-     * @param io     JEI 语义角色，未消耗的输入为催化剂
-     * @param chance 产出概率，输入恒为 1
-     */
-    private record SlotItem(ItemStack stack, IngredientIO io, float chance) {
-    }
-
-    /**
-     * @param stack  槽位展示的流体
-     * @param io     JEI 语义角色，未消耗的输入为催化剂
-     * @param chance 产出概率，输入恒为 1
-     */
-    private record SlotFluid(FluidStack stack, IngredientIO io, float chance) {
     }
 }

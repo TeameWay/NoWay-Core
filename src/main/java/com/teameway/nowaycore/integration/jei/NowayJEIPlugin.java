@@ -8,7 +8,6 @@ import com.teameway.nowaycore.common.recipe.TypeIndex;
 import com.teameway.nowaycore.init.ModRegistries;
 import com.teameway.nowaycore.integration.jei.categories.MultiblockInfoRecipeCategory;
 import com.teameway.nowaycore.integration.jei.categories.MultiblockRecipeCategory;
-import com.teameway.nowaycore.integration.jei.ui.MultiblockRecipeUI;
 import dev.anvilcraft.lib.v2.registrum.util.entry.RegistryEntry;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -27,7 +26,7 @@ import java.util.Map;
  * JEI 集成
  *
  * <p>分类按机器类型注册；配方直接取客户端配方索引里的编译结果，与服务端同一份数据，
- * 因此参考排序（优先级）与机器实际选择配方的顺序一致。</p>
+ * 因此参考排序与机器实际选择配方的顺序一致。</p>
  */
 @JeiPlugin
 public class NowayJEIPlugin implements IModPlugin {
@@ -38,7 +37,7 @@ public class NowayJEIPlugin implements IModPlugin {
     }
 
     /**
-     * 取某机器类型当前的配方列表，索引尚未建立时返回空列表。
+     * 取某机器类型当前的配方列表，索引尚未建立时返回空列表
      *
      * @param machine 机器类型 ID
      * @return 已按优先级排序的配方
@@ -64,7 +63,7 @@ public class NowayJEIPlugin implements IModPlugin {
         for (RegistryEntry<MultiblockType, MultiblockType> entry : NoWayCore.REGISTRUM.getAll(ModRegistries.MULTIBLOCK_TYPES)) {
             List<CompiledRecipe> recipes = recipesOf(entry.getId());
             MultiblockRecipeCategory category = new MultiblockRecipeCategory(
-                helpers, typeOf(entry.getId()), entry.get(), MultiblockRecipeUI.heightFor(recipes)
+                helpers, typeOf(entry.getId()), entry.get(), recipes
             );
             registration.addRecipeCategories(category);
         }
