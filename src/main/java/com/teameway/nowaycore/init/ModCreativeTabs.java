@@ -11,11 +11,6 @@ public class ModCreativeTabs {
         .lang(_ -> "itemGroup.noway_core.main", "Noway Core - Main")
         .register();
 
-    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MULTIBLOCK = REGISTRUM
-        .creativeTab("multiblock", ModItems.INFINITE_COLOR_APPLICATOR)
-        .lang(_ -> "itemGroup.noway_core.multiblock", "Noway Core - Multiblock")
-        .register();
-
     public static void register() {
     }
 }

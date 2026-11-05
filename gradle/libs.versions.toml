@@ -8,6 +8,7 @@ lombok = "9.4.0"
 anvillib = "2.0.0+snapshot.598"
 ldlib2 = "26.3.2.45.a"
 appeng = "26.3.1-alpha"
+bnvilMultiblock = "1.0.0"
 
 [libraries]
 anvillib = { group = "dev.anvilcraft.lib", name = "anvillib-neoforge-26.3", version.ref = "anvillib" }
@@ -17,6 +18,7 @@ jei-neoforge = { group = "mezz.jei", name = "jei-26.3-neoforge", version.ref = "
 lidlib2 = { group = "com.lowdragmc.ldlib2", name = "ldlib2-neoforge-26.3", version.ref = "ldlib2" }
 appeng = { group = "org.appliedenergistics", name = "appliedenergistics2", version.ref = "appeng" }
 jade = { group = "maven.modrinth", name = "jade", version.ref = "jade" }
+bnvil-multiblock = { group = "com.teameway", name = "bnvil_multiblock-neoforge", version.ref = "bnvilMultiblock" }
 
 [plugins]
 modDevGradle = { id = "net.neoforged.moddev", version.ref = "modDevGradle" }

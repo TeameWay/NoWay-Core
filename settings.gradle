@@ -11,3 +11,6 @@ plugins {
 }
 
 rootProject.name = mod_id + "-neoforge"
+
+// 组合构建：直接引用同级的 BnvilMultiblock 源码工程，改代码无需先发布
+includeBuild('../BnvilMultiblock')

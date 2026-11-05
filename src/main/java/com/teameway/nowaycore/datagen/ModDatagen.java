@@ -3,7 +3,6 @@ package com.teameway.nowaycore.datagen;
 import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.datagen.lang.ModLangGenerator;
 import com.teameway.nowaycore.datagen.model.ItemModelGenerator;
-import com.teameway.nowaycore.datagen.multiblock.MultiblockDefinitionProvider;
 import com.teameway.nowaycore.datagen.provider.ModDataProvider;
 import com.teameway.nowaycore.datagen.recipe.ModRecipeGenerator;
 import dev.anvilcraft.lib.v2.registrum.providers.ProviderType;
@@ -37,7 +36,6 @@ public class ModDatagen {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getWorldLookupProvider();
 
         event.addProvider(new ModDataProvider(packOutput));
-        event.addProvider(new MultiblockDefinitionProvider(packOutput, lookupProvider));
     }
 
     @SubscribeEvent
