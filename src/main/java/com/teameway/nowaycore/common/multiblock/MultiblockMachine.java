@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  *
  * @param id         结构定义 ID，同时也是 datagen 输出的文件名
  * @param controller 控制器入口（{@code noway_core:multiblock_controllers} 注册表）
- * @param definition 结构形状（延迟构建，只在 datagen 与需要时求值）
+ * @param definition 结构形状，延迟构建，只在 datagen 与需要时求值
  */
 public record MultiblockMachine(
     Identifier id,
@@ -46,7 +46,7 @@ public record MultiblockMachine(
          * 结构形状，用 {@code MultiblockDefinition.builder()} 链式声明
          *
          * @param definition 形状（延迟构建）
-         * @return this
+         * @return 自身
          */
         public Builder definition(Supplier<MultiblockDefinition> definition) {
             this.definition = definition;

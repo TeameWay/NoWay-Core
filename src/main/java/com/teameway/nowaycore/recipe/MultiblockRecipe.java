@@ -28,28 +28,13 @@ import java.util.List;
 /**
  * 多方块机器配方
  *
- * <p>配方只描述“需要什么、产出什么、多久”，匹配由机器自己的索引完成，因此
- * {@link #matches(RecipeInput, Level)} 恒为 {@code false}，不参与原版合成匹配。</p>
- *
- * <p>JSON 形状：</p>
- * <pre>
- * {
- *   "type": "noway_core:multiblock",
- *   "machine": "noway_core:simple_processor",
- *   "variants": ["noway_core:cooled"],
- *   "time": 200,
- *   "priority": 0,
- *   "inputs": [ ... ],
- *   "outputs": [ ... ]
- * }
- * </pre>
+ * <p>只描述需要什么、产出什么、耗时多久，匹配由机器侧的索引完成，
+ * {@link #matches(RecipeInput, Level)} 恒为 {@code false}。</p>
  *
  * @param machine  机器类型 ID
  * @param variants 允许的形态标签，空表示该类型所有形态
  * @param time     单周期耗时，单位 tick
  * @param priority 同输入多配方时的排序优先级，越大越先
- * @param inputs   输入项
- * @param outputs  产出项
  */
 public record MultiblockRecipe(
     Identifier machine,
@@ -85,8 +70,6 @@ public record MultiblockRecipe(
     /**
      * 机器匹配由索引层完成，这里不参与原版合成匹配。
      *
-     * @param input 原版配方输入
-     * @param level 世界
      * @return 恒为 {@code false}
      */
     @Override
@@ -95,10 +78,7 @@ public record MultiblockRecipe(
     }
 
     /**
-     * 不在原版合成界面展示产物。
-     *
-     * @param input 原版配方输入
-     * @return 空物品栈
+     * 不在原版合成界面展示产物，恒返回空物品栈。
      */
     @Override
     public ItemStack assemble(RecipeInput input) {
@@ -106,7 +86,7 @@ public record MultiblockRecipe(
     }
 
     /**
-     * 机器配方不属于配方书，标记为 special 以跳过原版的“可放置”检查。
+     * 机器配方不进配方书，标记为 special 以跳过原版的可放置检查。
      *
      * @return 恒为 {@code true}
      */

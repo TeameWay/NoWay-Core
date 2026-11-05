@@ -24,18 +24,18 @@ import net.minecraft.util.Mth;
 /**
  * 端口信息栏
  *
- * <p>列出结构里所有端口，一张卡片一个。拖动由 {@link WindowDragHelper#setDragMove} 接管：
- * 它把屏幕坐标下的位移换算进元素本地坐标系再加到起始位置上，因此父元素带缩放或偏移时也不会跑偏；
- * 手写这段换算容易忽略那层变换，表现为面板跟不上鼠标。</p>
+ * <p>列出结构里所有端口，一张卡片一个。拖动由 {@link WindowDragHelper#setDragMove} 接管，
+ * 它把屏幕坐标下的位移换算进元素本地坐标系，父元素带缩放或偏移时也不会跑偏；
+ * 手写换算容易漏掉这层变换，表现为面板跟不上鼠标。</p>
  *
- * <p>位置用绝对坐标而不是流式布局：面板要能被拖到任意位置，只有绝对定位才能表达“离开原位”。</p>
+ * <p>位置使用绝对坐标，面板才能被拖离原位。</p>
  */
 public class PortPanel {
     /**
-     * 滚动条瘦身
+     * 滚动条与内容区的瘦身样式
      *
-     * <p>主题给纵向滚动条 5 像素、内容区再留 3 像素内边距，合计吃掉 16 像素。
-     * 这块面板只有 160 出头宽，压到 4 与 1 之后卡片才拿得到足够的宽度。</p>
+     * <p>主题默认纵向滚动条 5 像素、内容区内边距 3 像素，合计吃掉 16 像素；
+     * 面板只有 160 出头宽，压到 4 与 1 之后卡片才有足够宽度。</p>
      */
     private static final String SCROLL_STYLES = """
         scroller-vertical:host {
@@ -48,33 +48,16 @@ public class PortPanel {
         """;
 
     /**
-     * 卡片高度
-     *
-     * <p>两行文字加内边距：第一行端口种类，第二行坐标。等级放不下，挪进了悬浮提示。</p>
+     * 卡片高度：两行文字加内边距，等级放不下，挪进了悬浮提示。
      */
     private static final int CARD_HEIGHT = 24;
-    /**
-     * 卡片之间的间距
-     */
     private static final int CARD_SPACING = 2;
-    /**
-     * 面板内边距
-     */
     private static final int PADDING = 3;
-    /**
-     * 标题栏高度
-     */
     private static final int TITLE_HEIGHT = 12;
-    /**
-     * 一行文本的高度
-     */
     private static final int LINE = 10;
-    /**
-     * 面板宽度
-     */
     private static final int PANEL_WIDTH = 162;
     /**
-     * 面板最大高度，超出时内部滚动
+     * 面板最大高度，超出时内部滚动。
      */
     private static final int MAX_HEIGHT = 150;
 
@@ -84,8 +67,8 @@ public class PortPanel {
     /**
      * 打开指定端口界面
      *
-     * <p>客户端不能直接调用 {@code BlockUIMenuType.openUI}：它只接受 {@code ServerPlayer}。
-     * 这里把坐标发回服务端，由服务端替玩家打开对应方块实体的界面。</p>
+     * <p>客户端不能直接调用 {@code BlockUIMenuType.openUI}，它只接受 {@code ServerPlayer}，
+     * 因此把坐标发回服务端代为打开。</p>
      *
      * @param pos 端口位置
      */
@@ -113,8 +96,7 @@ public class PortPanel {
         UIElement panel = new UIElement()
             .layout(layout -> layout
                 .positionType(TaffyPosition.ABSOLUTE)
-                // 起点在开关按钮正下方：按钮是这块面板的入口，弹出位置贴着它才看得出关系。
-                // 左边缘取窄条宽度，于是面板紧贴按钮右侧展开，横向也不压住按钮本身
+                // 起点在开关按钮正下方，左边缘取窄条宽度，面板紧贴按钮右侧展开，横向不压住按钮
                 .left(ControllerLayout.RAIL_WIDTH)
                 .top(ControllerLayout.PADDING + ControllerLayout.TOGGLE_SIZE + ControllerLayout.TOGGLE_GAP)
                 .width(PANEL_WIDTH)
@@ -135,16 +117,12 @@ public class PortPanel {
         title.addChild(titleText);
         panel.addChild(title);
 
-        // 只有标题栏能拖动：卡片自己还要接收点击，整块都能拖会与点击冲突。
-        // 交给 LDLib2 自带的 WindowDragHelper：它把屏幕坐标下的位移换算到元素本地坐标系，
-        // 因此父元素有缩放或偏移时位置也不会跑偏；自己用原始 event.x 直接算会忽略这层换算。
+        // 只有标题栏能拖动，卡片自己还要接收点击，整块都能拖会与点击冲突。
         WindowDragHelper.setDragMove(title, panel, null, null);
-        // 助手本身不夹边界，拖过头会把面板留在可视区外再也抓不回来。
-        // 这个监听排在它之后，所以读到的是它刚写好的位置，只需把越界的那一维拉回来。
+        // 助手本身不夹边界，拖过头会把面板留在可视区外；这个监听排在它之后，只需把越界维度拉回。
         title.addEventListener(UIEvents.DRAG_SOURCE_UPDATE, event -> clamp(panel, height));
 
-        // 卡片放进滚动视图：端口数由结构决定，超过能显示的数量时
-        // 只有可滚动才不会把后面几个悄悄裁掉
+        // 卡片放进滚动视图，端口数超出可见高度时不会被裁掉
         UIElement list = new UIElement().layout(layout -> layout
             .widthPercent(100)
             .flexDirection(FlexDirection.COLUMN)
@@ -159,8 +137,7 @@ public class PortPanel {
             .verticalScrollDisplay(ScrollDisplay.AUTO));
         scroll.addScrollViewChild(list);
         scroll.layout(layout -> layout.widthPercent(100).flex(1));
-        // 与控制器界面同一份瘦身样式：主题默认的 5px 滚动条 + 3px 内边距会把卡片挤窄一圈。
-        // 这段样式只挂在面板所在子树上，不影响别处
+        // 瘦身样式只挂在面板子树上，不影响别处
         scroll.addLocalStylesheet(SCROLL_STYLES);
         panel.addChild(scroll);
         return panel;
@@ -169,8 +146,8 @@ public class PortPanel {
     /**
      * 把面板拉回可视区
      *
-     * <p>{@code getLayoutX/Y} 才是 {@code left/top} 的当前值；{@code getPositionX/Y} 是排完版的
-     * 绝对位置，还叠着父元素的偏移，拿它去写 {@code left} 会越挪越偏。</p>
+     * <p>{@code getLayoutX/Y} 才是 {@code left/top} 的当前值，{@code getPositionX/Y} 还叠着父元素偏移，
+     * 拿它写 {@code left} 会越挪越偏。</p>
      *
      * @param panel  面板
      * @param height 面板高度
@@ -182,7 +159,7 @@ public class PortPanel {
         }
         float currentX = panel.getLayoutX();
         float currentY = panel.getLayoutY();
-        // 上限按整个界面算；下限留出按钮那一窄条，否则面板能压到开关按钮上把它挡住
+        // 上限按整个界面算，下限留出窄条，否则面板会压住开关按钮
         float maxX = Math.max(0.0F, mui.getScreenWidth() - PANEL_WIDTH);
         float maxY = Math.max(0.0F, mui.getScreenHeight() - height);
         float clampedX = Mth.clamp(currentX, ControllerLayout.RAIL_WIDTH, maxX);
@@ -196,8 +173,8 @@ public class PortPanel {
     /**
      * 让一行文字占满卡片宽度、超长时截断
      *
-     * <p>{@code adaptiveWidth} 必须关掉：开着时文本宽度会以 IMPORTANT 优先级写成元素宽度，
-     * 元素自己撑大就会溢出卡片，{@code HIDE} 也就无从生效。</p>
+     * <p>{@code adaptiveWidth} 必须关闭，否则文本宽度会以 IMPORTANT 优先级写成元素宽度，
+     * 元素撑大后溢出卡片，{@code HIDE} 不再生效。</p>
      *
      * @param label 文本元素
      */
@@ -222,9 +199,7 @@ public class PortPanel {
         BlockPos pos = controller.portPosition(index);
         PortKind kind = controller.portKind(index);
 
-        // 与线程卡片同一套排法：纵向两行，名称一行、坐标一行。
-        // 横向并排的问题在于两段宽度要在同一个窄栏里争，无论怎么分配，
-        // 总有一类名字配一类坐标会溢出来；拆成两行后各行独享整宽，这个矛盾就不存在了。
+        // 与线程卡片同一套排法：纵向两行，名称一行、坐标一行，各行独享整宽，避免横向争宽度导致溢出。
         UIElement card = new UIElement()
             .layout(layout -> layout
                 .widthPercent(100)
@@ -240,13 +215,12 @@ public class PortPanel {
         clip(name);
 
         Label where = new Label();
-        // 不带空格：{@code 125,66,-19} 比 {@code 125, 66, -19} 省 12 像素
+        // 坐标之间不留空格，可省 12 像素宽度
         where.setText(Component.literal(pos.getX() + "," + pos.getY() + "," + pos.getZ()));
         clip(where);
 
         card.addChildren(name, where);
-        // 等级放进悬浮提示而不是卡片：卡片一行放不下「种类 + 等级 + 坐标」，
-        // 而等级是次要信息，操作提示才是这一行真正的用法说明
+        // 等级与操作提示放进悬浮提示，卡片一行放不下种类、等级与坐标
         card.style(style -> style.tooltips(
             Component.translatable("gui.noway_core.port_panel.tier", controller.portTier(index)),
             Component.translatable("gui.noway_core.port_panel.tooltip")

@@ -3,8 +3,7 @@ package com.teameway.nowaycore.integration.jei.layout;
 /**
  * 结构页排版
  *
- * <p>三段式：左上角单格显示点击选中的方块，中部整块区域放结构预览，底部横排滚动条列出
- * 结构所需的全部方块。高度固定，方块再多也只影响底部横向滚动，不改变页面尺寸。</p>
+ * <p>左上角单格显示选中方块，中部放结构预览，底部横排清单列出全部所需方块；高度固定，方块再多只影响横向滚动。</p>
  */
 public record StructureLayout() {
     /**
@@ -12,9 +11,6 @@ public record StructureLayout() {
      */
     public static final StructureLayout INSTANCE = new StructureLayout();
 
-    /**
-     * 结构预览区域高度。
-     */
     public static final int PREVIEW_HEIGHT = 108;
     /**
      * 底部方块清单区域高度，含横向滚动条。

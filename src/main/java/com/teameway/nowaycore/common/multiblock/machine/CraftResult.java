@@ -3,7 +3,7 @@ package com.teameway.nowaycore.common.multiblock.machine;
 /**
  * 配方执行结果
  *
- * <p>区分“材料不足”和“输出堵塞”，机器状态机据此决定是重新搜索配方还是原地等待。</p>
+ * <p>区分材料不足与输出堵塞，机器状态机据此决定重新搜索配方还是原地等待。</p>
  */
 public enum CraftResult {
     /**

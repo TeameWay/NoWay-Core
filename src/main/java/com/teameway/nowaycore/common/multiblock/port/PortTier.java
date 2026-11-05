@@ -6,11 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 /**
  * 端口等级
  *
- * <p>各等级使用同一个记录，按端口种类取对应字段：物品看 {@code slots}，流体看
- * {@code fluidCapacity}，能量看 {@code energyCapacity}，并行仓看 {@code parallels}，
- * 线程仓看 {@code threads}。</p>
+ * <p>各等级共用同一记录，按端口种类取对应字段。</p>
  *
- * @param name           等级名（用于展示，例如 {@code basic}/{@code advanced}）
+ * @param name           等级名
  * @param slots          物品槽位数量
  * @param fluidCapacity  流体容量（mB）
  * @param energyCapacity 能量容量（FE）

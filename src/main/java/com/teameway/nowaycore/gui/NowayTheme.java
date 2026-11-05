@@ -11,11 +11,10 @@ import java.util.List;
 /**
  * 界面主题
  *
- * <p>全模组统一用 {@code lss/dark_paper.lss}：从 LDLib2 自带的 paper 主题翻转出来的深色版，
- * 选择器与 paper 完全一致，只换了配色，因此任何吃 paper 的组件在这里也都有样式。</p>
+ * <p>全模组统一用 {@code lss/dark_paper.lss}：由 LDLib2 自带的 paper 主题翻转出的深色版，
+ * 选择器与 paper 一致，吃 paper 的组件在这里同样有样式。</p>
  *
- * <p>集中在一个入口而不是每个界面各写一遍：主题改一处就够，也不会出现某个界面漏改、
- * 白底黑字与深色界面混在一起的情况。</p>
+ * <p>主题集中在此入口设置，界面不会漏套样式。</p>
  */
 public class NowayTheme {
 

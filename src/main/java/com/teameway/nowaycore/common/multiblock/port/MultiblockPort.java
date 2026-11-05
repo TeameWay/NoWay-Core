@@ -3,18 +3,11 @@ package com.teameway.nowaycore.common.multiblock.port;
 /**
  * 多方块端口
  *
- * <p>由端口方块实体实现；控制器成型时扫描结构并收集。物品/流体/能量端口另外实现
- * {@link ItemPort}、{@link FluidPort}、{@link EnergyPort} 以暴露能力。</p>
+ * <p>由端口方块实体实现，成型时被扫描收集；资源端口另实现 {@link ItemPort}、{@link FluidPort}、{@link EnergyPort}。</p>
  */
 public interface MultiblockPort {
-    /**
-     * @return 端口种类
-     */
     PortKind portKind();
 
-    /**
-     * @return 端口等级
-     */
     PortTier tier();
 
     /**

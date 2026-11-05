@@ -22,8 +22,7 @@ import java.util.Optional;
 /**
  * 配方执行
  *
- * <p>整个过程放进一个 {@link Transaction}：先扣输入，再塞产出；任何一步失败（材料被别处拿走、
- * 输出池放不下）都回滚，保证“要么整批成功，要么完全不动”。</p>
+ * <p>整个过程放进一个 {@link Transaction}：先扣输入再塞产出，任一步失败都整体回滚。</p>
  */
 public class RecipeExecutor {
     private RecipeExecutor() {
@@ -72,7 +71,7 @@ public class RecipeExecutor {
     /**
      * 相乘并饱和到 {@link Long#MAX_VALUE}
      *
-     * <p>产出数量与并行倍数都可能很大，直接相乘会溢出成负数，那一步会被当成“没有产出”而静默跳过。</p>
+     * <p>产出数量与并行倍数都可能很大，直接相乘会溢出为负数，该产出会被当作零而静默跳过。</p>
      *
      * @param value 单次产出
      * @param batch 并行倍数
@@ -118,8 +117,7 @@ public class RecipeExecutor {
     /**
      * 按 {@code int} 上限分批取出，直到取满
      *
-     * <p>Transfer API 的 {@code extract} 只接受 {@code int}，直接强转会让超出部分变成负数。
-     * 分批取同时也保留了“取不满就整批回滚”的语义。</p>
+     * <p>{@code extract} 只接受 {@code int}，直接强转会让超出部分变成负数；分批取同时保证取不满时整批回滚。</p>
      *
      * @return 是否取满
      */

@@ -6,7 +6,7 @@ import net.minecraft.util.StringRepresentable;
 /**
  * 多方块端口种类
  *
- * <p>输入/输出方向写死在种类里，便于扫描后直接分组；扩展新资源时加一个种类即可。</p>
+ * <p>输入/输出方向写在种类里，扫描后可直接分组。</p>
  */
 public enum PortKind implements StringRepresentable {
     /**
@@ -60,8 +60,7 @@ public enum PortKind implements StringRepresentable {
     /**
      * 按序列化名查找种类
      *
-     * <p>只在读同步下来的端口列表时使用：那边传的是字符串，与枚举值之间需要一个反向查找。
-     * 名字对不上时退回 {@link #ITEM_INPUT}，让界面显示出一个具体种类而不是崩掉。</p>
+     * <p>只在读取同步数据时使用；名字对不上时退回 {@link #ITEM_INPUT}，避免界面崩溃。</p>
      *
      * @param name 序列化名
      * @return 对应的种类

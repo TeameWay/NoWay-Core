@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 端口方块注册表
  *
- * <p>给方块登记“它是什么端口、什么等级”，供扫描、UI、JEI 与调试命令查询。方块实体本身仍需
- * 实现 {@link MultiblockPort} 及对应的资源接口。</p>
+ * <p>登记方块对应的端口种类与等级，供扫描、UI、JEI 与调试命令查询；方块实体仍需实现
+ * {@link MultiblockPort} 及对应的资源接口。</p>
  */
 public class PortRegistry {
     private static final Map<Block, Descriptor> DESCRIPTORS = new ConcurrentHashMap<>();

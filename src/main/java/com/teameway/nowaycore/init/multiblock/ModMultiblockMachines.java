@@ -10,8 +10,8 @@ import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 /**
  * 多方块机器与控制器的注册
  *
- * <p>两者都是 {@link RegistryEntry}：控制器进入 {@code noway_core:multiblock_controllers}，
- * 机器声明进入 {@code noway_core:multiblocks}，datagen 直接遍历后者输出定义 JSON。</p>
+ * <p>控制器进入 {@code noway_core:multiblock_controllers}，机器声明进入 {@code noway_core:multiblocks}，
+ * datagen 直接遍历后者输出定义 JSON。</p>
  */
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
 public class ModMultiblockMachines {

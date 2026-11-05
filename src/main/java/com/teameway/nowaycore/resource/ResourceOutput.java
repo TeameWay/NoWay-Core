@@ -15,15 +15,8 @@ import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntPr
 /**
  * 配方产出项
  *
- * <p>JSON 形状（{@code type} 决定其余字段）：</p>
- * <pre>
- * { "type": "item",   "item": "minecraft:iron_ingot", "count": 2, "chance": 1.0 }
- * { "type": "fluid",  "fluid": "minecraft:water", "amount": 500, "chance": 0.5 }
- * { "type": "energy", "amount": 1000 }
- * </pre>
- *
- * <p>数量使用 {@link ContextIntProvider}，支持常量/均匀/二项分布；{@code chance} 在
- * {@code (0, 1]} 区间。物品数量不在 {@link ItemStackTemplate} 上表达，避免其 1~99 的限制。</p>
+ * <p>数量使用 {@link ContextIntProvider}，{@code chance} 取在 {@code (0, 1]} 区间。
+ * 物品数量不由 {@link ItemStackTemplate} 表达，避免其 1 至 99 的限制。</p>
  */
 public sealed interface ResourceOutput {
     /**
@@ -39,14 +32,8 @@ public sealed interface ResourceOutput {
         }
     );
 
-    /**
-     * @return 资源种类
-     */
     ResourceKind kind();
 
-    /**
-     * @return 数量提供器
-     */
     ContextIntProvider amount();
 
     /**
@@ -57,7 +44,7 @@ public sealed interface ResourceOutput {
     /**
      * 物品产出
      *
-     * @param template 物品模板（数量恒为 1，组件由模板携带）
+     * @param template 物品模板，数量恒为 1，组件由模板携带
      * @param amount   数量提供器
      * @param chance   产出概率
      */

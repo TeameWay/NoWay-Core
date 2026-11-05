@@ -31,8 +31,7 @@ import java.util.Objects;
  * 把世界里的一块区域导出成 anvillib 的多方块定义
  *
  * <p>两种输出共用同一份区域数据：{@link ExportFormat#JSON} 走 {@link MultiblockDefinition#CODEC}，
- * 与 datagen 产物完全同构；{@link ExportFormat#JAVA} 生成可直接粘贴到
- * {@code ModMultiblockDefinitions} 的链式代码。</p>
+ * 与 datagen 产物同构；{@link ExportFormat#JAVA} 生成可直接粘贴到 {@code ModMultiblockDefinitions} 的链式代码。</p>
  */
 public class MultiblockExporter {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

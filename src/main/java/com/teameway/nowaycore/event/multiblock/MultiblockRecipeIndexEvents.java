@@ -11,8 +11,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 /**
  * 服务端配方索引维护
  *
- * <p>服务端启动时建一次；每次数据包同步（玩家加入、{@code /reload}）时重建，并顺带请求把
- * 多方块配方类型同步给客户端，否则客户端拿不到这些配方。</p>
+ * <p>服务端启动时建一次；每次数据包同步（玩家加入、{@code /reload}）时重建，并请求把多方块配方类型
+ * 同步给客户端，否则客户端拿不到这些配方。</p>
  */
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
 public class MultiblockRecipeIndexEvents {

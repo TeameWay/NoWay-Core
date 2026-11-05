@@ -21,11 +21,9 @@ import java.util.List;
 /**
  * 配方拆解结果
  *
- * <p>把配方里的多态输入输出统一成物品列表、流体列表与能量数值，排版层只关心数量与尺寸，
- * 不需要再判断资源种类。排版计算与界面搭建共用同一份拆解结果，避免两处判断不一致。</p>
+ * <p>把多态输入输出统一成物品列表、流体列表与能量数值，排版计算与界面搭建共用同一份结果。</p>
  *
- * <p>输入侧与输出侧各自是一个“整体”：整体内部先排物品槽，两种槽都有时另起一行再排流体槽，
- * 每种槽都从左往右、从上往下填格。整体宽度取自身内容的列数，因此槽位少的整体会更窄。</p>
+ * <p>输入侧与输出侧各自是一个整体：先排物品槽，两种槽都有时另起一行再排流体槽，各自从左往右、从上往下填格。</p>
  *
  * @param itemInputs   物品输入，未消耗的输入按催化剂处理
  * @param fluidInputs  流体输入
@@ -40,9 +38,6 @@ public record RecipeContents(
     List<SlotFluid> fluidOutputs,
     long energyInput
 ) {
-    /**
-     * 物品组与流体组之间的纵向间距。
-     */
     private static final int GROUP_GAP = 1;
 
     /**
@@ -168,8 +163,7 @@ public record RecipeContents(
     /**
      * 把 {@code long} 需求量压进物品堆栈的数量字段
      *
-     * <p>堆栈的数量是 {@code int}，直接塞入超出范围的值会截断成负数，整个堆栈随之判空、槽位变成空位。
-     * 这里只用于承载“有这个物品”这件事，真实数量由 {@link SlotItem#amount()} 另行携带。</p>
+     * <p>堆栈数量是 {@code int}，超出范围会截断成负数并让槽位判空；真实数量由 {@link SlotItem#amount()} 另行携带。</p>
      *
      * @param count 需求量
      * @return 可以放进堆栈的数量，至少 1
@@ -193,8 +187,8 @@ public record RecipeContents(
     }
 
     /**
-     * @param stack  槽位展示的物品，数量已被压进 {@code int}
-     * @param amount 真实需求量，可能超出堆栈能表达的范围
+     * @param stack  槽位展示的物品，数量已压进 {@code int}
+     * @param amount 真实需求量，可能超出堆栈范围
      * @param io     JEI 语义角色，未消耗的输入为催化剂
      * @param chance 产出概率，输入恒为 1
      */

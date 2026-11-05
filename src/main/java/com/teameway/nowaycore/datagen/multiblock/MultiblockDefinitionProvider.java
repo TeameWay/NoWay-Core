@@ -21,8 +21,8 @@ import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 /**
  * 多方块定义数据生成器
  *
- * <p>遍历 {@code noway_core:multiblocks} 注册表，输出目录由注册表 {@code anvillib:definitions}
- * 推导，即 data/&lt;namespace&gt;/anvillib/definitions/&lt;path&gt;.json。</p>
+ * <p>遍历 {@code noway_core:multiblocks} 注册表，输出路径由注册表 {@code anvillib:definitions} 推导，
+ * 即 data/&lt;namespace&gt;/anvillib/definitions/&lt;path&gt;.json。</p>
  */
 public class MultiblockDefinitionProvider implements DataProvider {
     private static final Logger LOGGER = LogManager.getLogger(MultiblockDefinitionProvider.class);

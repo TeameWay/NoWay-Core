@@ -10,20 +10,12 @@ import net.minecraft.resources.Identifier;
 /**
  * 配方页中间的箭头
  *
- * <p>使用 JEI 配方页自带的箭头贴图。两张贴图都注册在 {@code minecraft:gui} 图集里：
- * {@code jei:recipe_arrow} 是空心箭头，{@code jei:recipe_arrow_filled} 是实心箭头。</p>
+ * <p>贴图取自 JEI 配方页，位于 {@code minecraft:gui} 图集：{@code jei:recipe_arrow} 为空心箭头，{@code jei:recipe_arrow_filled} 为实心箭头。</p>
  *
- * <p>动画由两层叠成：底层铺空心箭头，上层铺实心箭头并放进一个可剪裁的容器。
- * 容器宽度随界面 tick 从 0 增长到整张箭头宽度，于是实心箭头看起来是从左往右填满的。</p>
+ * <p>动画由两层叠成：底层铺空心箭头，上层实心箭头放进可剪裁容器，容器宽度随 tick 从 0 增长到整张宽度。</p>
  */
 public class Arrow {
-    /**
-     * JEI 的空心配方箭头，位于 {@code minecraft:gui} 图集。
-     */
     private static final Identifier SPRITE_EMPTY = Identifier.fromNamespaceAndPath("jei", "recipe_arrow");
-    /**
-     * JEI 的实心配方箭头，位于 {@code minecraft:gui} 图集。
-     */
     private static final Identifier SPRITE_FILLED = Identifier.fromNamespaceAndPath("jei", "recipe_arrow_filled");
 
     private Arrow() {
@@ -48,7 +40,7 @@ public class Arrow {
                 .width(JeiLayout.ARROW_WIDTH)
                 .height(JeiLayout.ARROW_HEIGHT)));
 
-        // 这一层负责剪裁：宽度就是实心箭头露出来的部分
+        // 剪裁层：宽度即实心箭头露出的部分
         UIElement mask = new UIElement().layout(layout -> layout
             .positionType(TaffyPosition.ABSOLUTE)
             .left(0)
@@ -90,8 +82,7 @@ public class Arrow {
     /**
      * 按 tick 推进填充宽度，铺满后从头再来
      *
-     * <p>JEI 会缓存配方界面，界面对象可能被反复复用；循环播放才能在每次翻到这条配方时
-     * 都看到动画，而不是只有第一次。</p>
+     * <p>JEI 会缓存并复用配方界面，循环播放才能让每次翻到这条配方时都看到动画。</p>
      *
      * @param mask     剪裁层
      * @param duration 填满所需的 tick 数

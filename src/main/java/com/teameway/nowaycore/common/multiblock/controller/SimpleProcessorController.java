@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.Block;
 
 /**
  * 简易多方块机器的控制器
- * <p>方块为 {@code noway_core:simple_controller}，结构定义 ID 为
- * {@code noway_core:simple_processor}（由 datagen 输出到
- * data/noway_core/anvillib/definitions/simple_processor.json）。</p>
+ *
+ * <p>方块为 {@code noway_core:simple_controller}，结构定义 ID 为 {@code noway_core:simple_processor}，
+ * 由 datagen 输出到 {@code data/noway_core/anvillib/definitions/simple_processor.json}。</p>
  */
 public class SimpleProcessorController extends SimpleController {
     public SimpleProcessorController(Block block, Identifier definitionId) {

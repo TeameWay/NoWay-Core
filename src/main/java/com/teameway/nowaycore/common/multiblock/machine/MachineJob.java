@@ -9,8 +9,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * 一个线程上的任务
  *
- * <p>只保存配方 ID、进度和并行倍数；读档后配方对象按 ID 从索引惰性找回，索引尚未构建时任务会
- * 自动放弃。缓存的配方绑定索引版本，配方重载后会重新解析，避免继续执行旧数据。</p>
+ * <p>只保存配方 ID、进度和并行倍数；配方按 ID 惰性找回，缓存绑定索引版本，重载后重新解析以避免执行旧数据。</p>
  */
 public class MachineJob {
     private final Identifier recipeId;
@@ -43,23 +42,14 @@ public class MachineJob {
         this.duration = recipe.time();
     }
 
-    /**
-     * @return 配方 ID
-     */
     public Identifier recipeId() {
         return this.recipeId;
     }
 
-    /**
-     * @return 并行倍数
-     */
     public int batch() {
         return this.batch;
     }
 
-    /**
-     * @return 已进行 tick 数
-     */
     public int progress() {
         return this.progress;
     }

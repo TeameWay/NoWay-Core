@@ -15,9 +15,8 @@ import java.util.Optional;
 /**
  * 物品原料
  *
- * <p>形状与 anvillib 的 {@code ItemIngredientPredicate} 一致：{@code items}（物品或标签，省略表示任意物品）、
- * {@code count}（需求量）、{@code components}（组件匹配）。区别只在 {@code count} 用 {@link Long} 表示，
- * 因此配方可以要求远超 32 位上限的数量，例如 1145141919810 个石头。</p>
+ * <p>形状与 anvillib 的 {@code ItemIngredientPredicate} 一致，区别只在 {@code count} 用 {@link Long}
+ * 表示，配方可以要求超出 32 位上限的数量。</p>
  *
  * @param items      物品集合，空表示任意物品
  * @param count      需求量，正整数

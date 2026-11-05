@@ -6,8 +6,8 @@ import net.minecraft.util.StringRepresentable;
 /**
  * 多方块配方使用的资源种类
  *
- * <p>后续加入气体、热量等资源时，在这里补充枚举值并实现对应的 {@link ResourceIngredient} /
- * {@link ResourceOutput} 变体即可，配方框架本身不需要改动。</p>
+ * <p>新增资源种类时在此补充枚举值，并实现对应的 {@link ResourceIngredient} 与
+ * {@link ResourceOutput} 变体，配方框架无需改动。</p>
  */
 public enum ResourceKind implements StringRepresentable {
     /**

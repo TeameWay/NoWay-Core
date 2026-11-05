@@ -20,7 +20,7 @@ import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
 /**
  * 能量端口方块实体
  *
- * <p>储量通过托管字段同步给客户端供界面显示，同步节奏由端口方块每 10 tick 采样一次控制。</p>
+ * <p>储量由端口方块每 10 tick 采样一次，经托管字段同步到客户端。</p>
  */
 public class EnergyPortBlockEntity extends BlockEntity implements EnergyPort, ISyncPersistRPCBlockEntity {
     private static final int SAMPLE_INTERVAL = 10;
@@ -77,9 +77,6 @@ public class EnergyPortBlockEntity extends BlockEntity implements EnergyPort, IS
         return this.energyStored;
     }
 
-    /**
-     * @return 容量
-     */
     public int energyCapacity() {
         return this.tier.energyCapacity();
     }

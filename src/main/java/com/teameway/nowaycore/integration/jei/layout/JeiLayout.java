@@ -6,8 +6,7 @@ import net.minecraft.network.chat.Component;
 /**
  * JEI 页面公共度量
  *
- * <p>两个页面共用同一套尺寸常量，避免各写一份内边距、行高后彼此错位。
- * 所有槽位都按像素绝对定位摆放，因此这里的数值就是最终渲染位置。</p>
+ * <p>两个页面共用同一套尺寸常量，避免内边距与行高彼此错位；槽位按像素绝对定位，这里的数值即最终渲染位置。</p>
  */
 public class JeiLayout {
     /**
@@ -18,29 +17,11 @@ public class JeiLayout {
      * {@code panel_bg} 施加的内边距。
      */
     public static final int PANEL_PADDING = 5;
-    /**
-     * 内边距之内的可用宽度。
-     */
     public static final int CONTENT_WIDTH = PANEL_WIDTH - PANEL_PADDING * 2;
-    /**
-     * 一个槽位的边长。
-     */
     public static final int SLOT = 18;
-    /**
-     * 网格内相邻槽位的间距，槽位彼此紧贴。
-     */
     public static final int SLOT_GAP = 0;
-    /**
-     * 不同区块之间的间距。
-     */
     public static final int BLOCK_GAP = 4;
-    /**
-     * 一行文本的高度。
-     */
     public static final int LINE = 10;
-    /**
-     * 相邻文本行的间距。
-     */
     public static final int LINE_GAP = 1;
     /**
      * 箭头图标宽度，取自 JEI 配方页的箭头贴图。

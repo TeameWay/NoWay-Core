@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * 多方块配方分类
  *
- * <p>每个机器类型一个分类，标题与图标取自该类型的控制器方块。同一分类内的配方共用一份
- * {@link RecipeLayout}，因此列宽、箭头位置与页面高度在切换配方时保持不变。</p>
+ * <p>每个机器类型一个分类，标题与图标取自控制器方块；同分类内的配方共用一份 {@link RecipeLayout}，切换配方时列宽、箭头位置与页面高度不变。</p>
  */
 public class MultiblockRecipeCategory extends ModularUIRecipeCategory<CompiledRecipe> {
     private final IRecipeType<CompiledRecipe> recipeType;

@@ -3,8 +3,7 @@ package com.teameway.nowaycore.common.multiblock.machine;
 /**
  * 线程间预留账本
  *
- * <p>同一 tick 内多个线程依次匹配配方，前面的线程会占用部分输入；后续线程看到的可用量要扣掉
- * 这些预留，避免同一个配方被打满输入。账本按槽位记录，周期结束清空。</p>
+ * <p>同一 tick 内多个线程依次匹配，后续线程的可用量要扣掉前面线程的预留，避免重复占用；账本按槽位记录，周期结束清空。</p>
  */
 public class ReservationLedger {
     private final long[] items;
@@ -20,25 +19,14 @@ public class ReservationLedger {
         this.fluids = new long[fluidSlots];
     }
 
-    /**
-     * @param slot 物品槽
-     * @return 已预留量
-     */
     public long reservedItem(int slot) {
         return this.items[slot];
     }
 
-    /**
-     * @param slot 流体槽
-     * @return 已预留量
-     */
     public long reservedFluid(int slot) {
         return this.fluids[slot];
     }
 
-    /**
-     * @return 已预留能量
-     */
     public long reservedEnergy() {
         return this.energy;
     }

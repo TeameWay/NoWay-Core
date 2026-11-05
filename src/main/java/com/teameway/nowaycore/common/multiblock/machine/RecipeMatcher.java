@@ -15,8 +15,7 @@ import java.util.Set;
 /**
  * 配方匹配
  *
- * <p>先用索引位图剔除“缺资源”的候选，再按优先级从低到高逐条尝试分配输入。分配结果同时可以作为
- * 事务的扣取计划，保证“匹配”和“消耗”用的是同一份数据。</p>
+ * <p>先用索引位图剔除缺资源的候选，再按优先级逐条尝试分配输入；分配结果同时是事务的扣取计划，匹配与消耗共用同一份数据。</p>
  */
 public class RecipeMatcher {
     private RecipeMatcher() {
@@ -95,7 +94,7 @@ public class RecipeMatcher {
         long[] takeFluids = new long[freeFluids.length];
         long takeEnergy = 0L;
 
-        // 先处理会被消耗的输入，催化剂在扣完之后再校验，避免“消耗 + 催化剂”共享同一批材料
+        // 先扣消耗型输入，催化剂在扣完之后再校验，避免两者共用同一批材料
         for (ResourceIngredient ingredient : recipe.recipe().inputs()) {
             if (!ingredient.consumed()) {
                 continue;
@@ -142,7 +141,7 @@ public class RecipeMatcher {
             }
         }
 
-        // 催化剂只要求“消耗后仍然存在”
+        // 催化剂只要求扣除后仍然存在
         for (ResourceIngredient ingredient : recipe.recipe().inputs()) {
             if (ingredient.consumed()) {
                 continue;
@@ -200,8 +199,7 @@ public class RecipeMatcher {
     /**
      * 相乘并饱和到 {@link Long#MAX_VALUE}
      *
-     * <p>需求数量本身可能就是 {@code long} 的上限，再乘并行倍数会溢出成负数，
-     * 那样“材料不足”会被误判成“材料充足”。</p>
+     * <p>需求可能已达 {@code long} 上限，再乘并行倍数会溢出为负数，使材料不足被判为充足。</p>
      *
      * @param value   单次需求
      * @param repeats 并行倍数

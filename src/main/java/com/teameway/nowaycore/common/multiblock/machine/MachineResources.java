@@ -16,8 +16,7 @@ import java.util.Set;
 /**
  * 机器输入快照
  *
- * <p>把端口表的输入池展开成“按槽位的可用量”，供匹配与事务使用。输出池不在这里，产出阶段
- * 单独处理。</p>
+ * <p>把端口表的输入池展开成按槽位的可用量，供匹配与事务使用；输出池不在这里，由产出阶段单独处理。</p>
  */
 public class MachineResources {
     private final ResourceHandler<ItemResource> itemInputs;
@@ -44,32 +43,18 @@ public class MachineResources {
         return new MachineResources(table.itemInputs(), table.fluidInputs(), table.energyInputs());
     }
 
-    /**
-     * @return 物品输入槽数量
-     */
     public int itemSlotCount() {
         return this.itemInputs.size();
     }
 
-    /**
-     * @return 流体输入槽数量
-     */
     public int fluidSlotCount() {
         return this.fluidInputs.size();
     }
 
-    /**
-     * @param slot 槽位
-     * @return 物品资源
-     */
     public ItemResource itemResource(int slot) {
         return this.itemInputs.getResource(slot);
     }
 
-    /**
-     * @param slot 槽位
-     * @return 流体资源
-     */
     public FluidResource fluidResource(int slot) {
         return this.fluidInputs.getResource(slot);
     }

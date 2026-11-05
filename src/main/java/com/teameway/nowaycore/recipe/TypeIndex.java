@@ -13,10 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 单一机器类型的配方索引
  *
- * <p>位序与 {@link #recipes()} 一致，且按优先级降序排好，因此从低位到高位遍历即为优先级顺序。</p>
- *
- * <p>形态过滤采用子集语义：只有配方要求的全部形态都出现在机器当前形态里，配方才参与匹配。
- * 于是无形态要求的配方对任何机器有效，而没有形态的机器只能匹配无形态要求的配方。</p>
+ * <p>位序与 {@link #recipes()} 一致，位图从低位到高位遍历即按优先级降序。形态过滤为子集语义，
+ * 配方要求的形态必须全部出现在机器当前形态里，无形态要求的配方对任何机器有效。</p>
  */
 public class TypeIndex {
     private final Identifier machine;
@@ -48,8 +46,8 @@ public class TypeIndex {
     /**
      * 计算候选配方位图
      *
-     * <p>做法是“剔除”：从形态允许的配方里减去所有“需要某个当前不可用资源”的配方，剩下的即为超集。
-     * 带通配输入的配方不会被剔除，留到后续数量校验阶段处理。</p>
+     * <p>从形态允许的配方里减去需要当前不可用资源的配方。带通配输入的配方不会被剔除，
+     * 留到后续数量校验阶段处理。</p>
      *
      * @param available 当前可用的资源键
      * @param variants  机器当前形态，必须是不可变集合
@@ -66,9 +64,7 @@ public class TypeIndex {
     }
 
     /**
-     * 取形态过滤位图，按形态集合缓存
-     *
-     * <p>同一形态组合会被大量机器复用，缓存后每次查询只需拷贝一份位图。</p>
+     * 取形态过滤位图，按形态集合缓存，缓存命中时只需拷贝一份位图。
      *
      * @param variants 机器当前形态
      * @return 形态允许的配方位图（共享实例，调用方不得修改）
@@ -87,23 +83,17 @@ public class TypeIndex {
         );
     }
 
-    /**
-     * @return 机器类型 ID
-     */
     public Identifier machine() {
         return this.machine;
     }
 
     /**
-     * @return 按优先级排序的配方列表
+     * @return 按优先级降序排列的配方列表
      */
     public List<CompiledRecipe> recipes() {
         return this.recipes;
     }
 
-    /**
-     * @return 配方数量
-     */
     public int size() {
         return this.recipes.size();
     }

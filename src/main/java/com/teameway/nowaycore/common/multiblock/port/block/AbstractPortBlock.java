@@ -21,8 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
 /**
  * 端口方块基类
  *
- * <p>只保存“种类 + 等级”，对应的方块实体在构造时从这里取等级来创建容量；右键打开该端口自己的
- * 界面，界面上可直接操作库存或查看容量。</p>
+ * <p>只保存种类与等级，方块实体在构造时按等级创建容量。</p>
  */
 public abstract class AbstractPortBlock extends Block implements EntityBlock, BlockUIMenuType.BlockUI {
     private final PortKind portKind;
@@ -34,16 +33,10 @@ public abstract class AbstractPortBlock extends Block implements EntityBlock, Bl
         this.tier = tier;
     }
 
-    /**
-     * @return 端口种类
-     */
     public PortKind portKind() {
         return this.portKind;
     }
 
-    /**
-     * @return 端口等级
-     */
     public PortTier tier() {
         return this.tier;
     }
@@ -81,10 +74,6 @@ public abstract class AbstractPortBlock extends Block implements EntityBlock, Bl
 
     /**
      * 创建对应的方块实体
-     *
-     * @param pos   位置
-     * @param state 方块状态
-     * @return 方块实体
      */
     protected abstract BlockEntity createBlockEntity(BlockPos pos, BlockState state);
 }

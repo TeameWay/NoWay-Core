@@ -10,15 +10,8 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 /**
  * 配方输入项
  *
- * <p>JSON 形状（{@code type} 决定其余字段）：</p>
- * <pre>
- * { "type": "item",   "items": { ... }, "consume": true }
- * { "type": "fluid",  "fluid": { "ingredient": "#c:water", "amount": 1000 }, "consume": true }
- * { "type": "energy", "amount": 10000 }
- * </pre>
- *
- * <p>匹配语义统一为“可用量 ≥ 需求量”；{@code consume} 为 {@code false} 时只校验存在、不扣除
- * （催化剂/模具）。能量是标量资源，恒为消耗。</p>
+ * <p>匹配语义统一为可用量大于等于需求量；{@code consume} 为 {@code false} 时只校验存在、不扣除，
+ * 用于催化剂与模具。能量是标量资源，恒为消耗。</p>
  */
 public sealed interface ResourceIngredient {
     /**
@@ -34,9 +27,6 @@ public sealed interface ResourceIngredient {
         }
     );
 
-    /**
-     * @return 资源种类
-     */
     ResourceKind kind();
 
     /**
@@ -47,7 +37,7 @@ public sealed interface ResourceIngredient {
     /**
      * 物品输入
      *
-     * @param input    物品集合 + 数量 + 组件匹配，数量上限是 {@code long}
+     * @param input    物品集合、数量与组件匹配，数量上限是 {@code long}
      * @param consumed 是否消耗
      */
     record Items(LongItemIngredient input, boolean consumed) implements ResourceIngredient {

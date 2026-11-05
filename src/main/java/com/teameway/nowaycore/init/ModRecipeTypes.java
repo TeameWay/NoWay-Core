@@ -12,9 +12,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModRecipeTypes {
     private static final DeferredRegister<RecipeType<?>> TYPE = DeferredRegister.create(Registries.RECIPE_TYPE, NoWayCore.MOD_ID);
 
-    /**
-     * 多方块配方类型
-     */
     public static final DeferredHolder<RecipeType<?>, RecipeType<MultiblockRecipe>> MULTIBLOCK =
         registerType("multiblock");
 

@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * 多方块配方索引
  *
- * <p>不可变快照，配方重载时整体替换；{@link #version()} 变化即代表需要清理机器侧查询缓存。</p>
+ * <p>不可变快照，配方重载时整体替换；{@link #version()} 变化即代表机器侧的查询缓存需要清理。</p>
  */
 public class MultiblockRecipeIndex {
     private static final AtomicLong VERSION = new AtomicLong();
@@ -129,15 +129,12 @@ public class MultiblockRecipeIndex {
      * 查询指定机器类型的索引
      *
      * @param machine 机器类型 ID
-     * @return 索引，不存在时返回 {@code null}
+     * @return 该机器类型的索引，不存在时返回 {@code null}
      */
     public @Nullable TypeIndex type(Identifier machine) {
         return this.types.get(machine);
     }
 
-    /**
-     * @return 配方总数
-     */
     public int recipeCount() {
         return this.recipeCount;
     }

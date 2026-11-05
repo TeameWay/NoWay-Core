@@ -20,8 +20,8 @@ import java.util.function.BiFunction;
 /**
  * 模组自己的 Registrum
  *
- * <p>在 Registrum 自带的方块/物品入口之外，提供多方块机器与控制器的注册入口；
- * 二者的条目存放在 {@link ModRegistries} 自建的注册表里。</p>
+ * <p>在 Registrum 自带的方块与物品入口之外，提供多方块机器、类型与控制器的注册入口，
+ * 条目存放在 {@link ModRegistries} 自建的注册表里。</p>
  */
 public class NowayRegistrum extends AbstractRegistrum<NowayRegistrum> {
     private static final Logger LOGGER = LogManager.getLogger(NowayRegistrum.class);
@@ -56,8 +56,7 @@ public class NowayRegistrum extends AbstractRegistrum<NowayRegistrum> {
     /**
      * 注册一个多方块控制器
      *
-     * <p>入口名同时作为结构定义 ID 的路径，因此 {@code simple_processor} 对应
-     * {@code noway_core:simple_processor}，也就是定义 JSON 的文件名。</p>
+     * <p>入口名同时作为结构定义 ID 的路径，也就决定定义 JSON 的文件名。</p>
      *
      * @param name    入口名
      * @param block   控制器方块

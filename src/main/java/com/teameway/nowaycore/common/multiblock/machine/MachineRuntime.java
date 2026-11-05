@@ -21,8 +21,7 @@ import java.util.Set;
 /**
  * 机器运行时
  *
- * <p>每个线程一个 job 槽；空闲线程每 tick 尝试匹配，运行中的线程只推进进度。并行倍数在任务开始时
- * 确定，执行时再按当时的实际输入复核，材料不够就缩小批次或放弃任务。</p>
+ * <p>每个线程一个 job 槽；并行倍数在任务开始时确定，执行时按实际输入复核，不够就缩小批次或放弃任务。</p>
  */
 public class MachineRuntime {
     private static final int BLOCKED_COOLDOWN = 20;
@@ -221,9 +220,6 @@ public class MachineRuntime {
         return java.util.Collections.unmodifiableList(new java.util.ArrayList<>(this.jobs));
     }
 
-    /**
-     * @return 机器类型
-     */
     public Identifier machine() {
         return this.machine;
     }

@@ -38,11 +38,9 @@ import java.util.stream.Collectors;
 /**
  * 控制器方块实体
  *
- * <p>成型后解析出机器类型（定义 tag）并建立运行时；未成型时每 20 tick 询问一次 anvillib 的管理器
- * （重启后成型状态由 SavedData 恢复，不会重新触发成型事件，所以需要主动补查）。</p>
- *
- * <p>线程状态通过 LDLib2 的托管字段同步给客户端：只同步展示需要的进度、耗时、倍数和配方 ID，
- * 不搬运任务对象本身。</p>
+ * <p>成型后解析机器类型（定义 tag）并建立运行时；未成型时每 20 tick 向 anvillib 补查一次，
+ * 因为重启后成型状态由 SavedData 恢复，不会重放成型事件。线程状态只同步进度、耗时、倍数与配方 ID，
+ * 不传输任务对象。</p>
  */
 public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRPCBlockEntity {
     private static final int FORM_RETRY_INTERVAL = 20;
@@ -50,14 +48,13 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
     /**
      * 端口摘要各段之间的分隔符
      *
-     * <p>用竖线而不是逗号：坐标内部就是用逗号分三段，混用会让解析全靠位次。</p>
+     * <p>坐标内部已用逗号分三段，这里必须换成竖线，否则解析无法按位次拆分。</p>
      */
     private static final char SEPARATOR = '|';
     /**
-     * 解析端口摘要时用的分隔正则
+     * 解析端口摘要用的分隔正则
      *
-     * <p>{@link String split} 收的是正则，竖线在正则里是"或"的意思，
-     * 直接传 {@link #SEPARATOR} 会把字符串切成单个字符。</p>
+     * <p>{@link String split} 接收正则，竖线在正则中表示分支，直接传 {@link #SEPARATOR} 会按单字符切分。</p>
      */
     private static final String SEPARATOR_REGEX = "\\|";
 
@@ -86,13 +83,9 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
     /**
      * 结构里所有端口的摘要，一项一个端口
      *
-     * <p>格式为 {@code 种类|等级|x,y,z}，例如 {@code item_input|basic|100,64,-20}。
-     * 端口在成型时扫描一次，位置本身不会变，所以只在 {@link #form} 与 {@link #unform} 时更新。</p>
-     *
-     * <p>用字符串而不是三个平行数组：{@code String[]} 是本类已经在用的同步类型
-     * （见 {@link #threadRecipe}），而 {@code BlockPos[]} 会走 {@code DirectArrayRef} 的元素级引用，
-     * 该路径在当前 LDLib2 版本下抛 NPE。把坐标编进字符串既绕开了那条路径，
-     * 也让端口列表天然有序、不会出现三个数组长度对不上的情况。</p>
+     * <p>格式为 {@code 种类|等级|x,y,z}，只在 {@link #form} 与 {@link #unform} 时更新，成型后端口位置不再变化。
+     * 使用 {@code String[]} 是因为 {@code BlockPos[]} 会走 {@code DirectArrayRef} 的元素级引用，
+     * 当前 LDLib2 版本在这条路径上抛 NPE，编码成字符串同时保证顺序与长度一致。</p>
      */
     @DescSynced
     private String[] ports = new String[0];
@@ -203,10 +196,10 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
     }
 
     /**
-     * 把端口表摊平成三个平行数组，供客户端铺端口信息栏
+     * 把端口表编码成字符串数组，供客户端铺端口信息栏
      *
-     * <p>平行数组而不是对象数组：托管同步对基本类型与 {@link BlockPos} 有现成的编解码器，
-     * 自定义记录类型要额外注册，为一个只读列表不值得。</p>
+     * <p>托管同步对基本类型与 {@link BlockPos} 有现成编解码器，自定义记录类型要额外注册，
+     * 为一个只读列表不值得，因此沿用 {@code String[]}。</p>
      *
      * @param table 端口表
      */
@@ -229,18 +222,10 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
         this.ports = new String[0];
     }
 
-    /**
-     * @param index 序号
-     * @return 该端口的方块位置
-     */
     public BlockPos portPosition(int index) {
         return this.portAt(index).pos();
     }
 
-    /**
-     * @param index 序号
-     * @return 该端口的种类
-     */
     public PortKind portKind(int index) {
         return PortKind.byName(this.portAt(index).kind());
     }
@@ -253,9 +238,6 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
         return this.portAt(index).tier();
     }
 
-    /**
-     * @return 端口数量
-     */
     public int portCount() {
         return this.ports.length;
     }
@@ -263,8 +245,8 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
     /**
      * 拆开一项端口摘要
      *
-     * <p>格式由 {@link #refreshPorts} 写入，只有本类会产出，所以解析失败视为数据损坏：
-     * 退回到原点与物品输入，让界面还能显示出一行而不是整个崩掉。</p>
+     * <p>格式由 {@link #refreshPorts} 写入，只有本类会产出，解析失败按数据损坏处理，
+     * 退回到原点与物品输入，避免界面整体崩溃。</p>
      *
      * @param index 序号
      * @return 拆开后的三段
@@ -292,18 +274,13 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
         }
     }
 
-    /**
-     * @param kind 种类名
-     * @param tier 等级名
-     * @param pos  位置
-     */
     private record PortEntry(String kind, String tier, BlockPos pos) {
     }
 
     /**
-     * 从运行时抓取一份线程状态快照，用于同步与界面展示
+     * 从运行时抓取线程状态快照，用于同步与界面展示
      *
-     * <p>数组长度变化时才重建数组，元素逐个覆盖，避免每 tick 制造垃圾。</p>
+     * <p>只在数组长度变化时重建，元素逐个覆盖，避免每 tick 分配临时对象。</p>
      */
     private void refreshStatus() {
         MachineRuntime current = this.runtime;
@@ -336,16 +313,10 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
                            : current.variants().stream().map(Identifier::toString).sorted().collect(Collectors.joining(", "));
     }
 
-    /**
-     * @return 线程数
-     */
     public int threadSlots() {
         return this.threadSlots;
     }
 
-    /**
-     * @return 并行倍数上限
-     */
     public int parallelSlots() {
         return this.parallelSlots;
     }
@@ -409,9 +380,9 @@ public class ControllerBlockEntity extends BlockEntity implements ISyncPersistRP
     }
 
     /**
-     * 判断机器是否正在处理任意一条配方
+     * 机器是否正在处理配方
      *
-     * <p>结构状态由这三个字段推导，不再单独同步：成型看机器类型，工作与否看有没有线程在跑配方。</p>
+     * <p>状态由各字段推导，不单独同步：成型看机器类型，工作与否看是否有线程持有配方。</p>
      *
      * @return 至少一个线程持有配方时为 true
      */

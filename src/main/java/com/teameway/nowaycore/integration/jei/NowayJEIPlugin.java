@@ -25,8 +25,7 @@ import java.util.Map;
 /**
  * JEI 集成
  *
- * <p>分类按机器类型注册；配方直接取客户端配方索引里的编译结果，与服务端同一份数据，
- * 因此参考排序与机器实际选择配方的顺序一致。</p>
+ * <p>分类按机器类型注册；配方取客户端配方索引里的编译结果，与服务端同源，排序与机器选择配方一致。</p>
  */
 @JeiPlugin
 public class NowayJEIPlugin implements IModPlugin {

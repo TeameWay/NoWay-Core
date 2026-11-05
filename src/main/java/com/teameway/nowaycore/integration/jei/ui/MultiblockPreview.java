@@ -28,15 +28,11 @@ import java.util.Map;
 /**
  * 多方块结构预览
  *
- * <p>把定义里的每个偏移量映射成具体方块状态：一份写进 LDLib2 的虚拟世界用于渲染，一份按位置
- * 保存成快照用于点击查询。</p>
+ * <p>把定义里的偏移量映射成具体方块状态：一份写进 LDLib2 的虚拟世界用于渲染，一份按位置保存成快照用于点击查询。</p>
  *
- * <p>写入虚拟世界时整体抬升 {@value #BASE_Y} 格。虚拟世界按主世界的世界高度建立，负 Y 层的方块
- * 写进去后读回是空气，只有非负层能保留；抬升后所有层都落在可写区间内，视觉上无差别。</p>
+ * <p>写入虚拟世界时整体抬升 {@value #BASE_Y} 格：虚拟世界按主世界高度建立，负 Y 层的方块写进去后读回是空气。</p>
  *
- * <p>结果按定义 ID 缓存：同一定义的多个界面共用一份虚拟世界与快照，只重建各自的相机。</p>
- *
- * <p>注意：定义在 {@code /reload} 后变化时缓存不会自动失效。</p>
+ * <p>结果按定义 ID 缓存，同一定义的多个界面共用虚拟世界与快照；但定义在 {@code /reload} 后变化时缓存不会失效。</p>
  */
 public class MultiblockPreview {
     /**
@@ -69,7 +65,7 @@ public class MultiblockPreview {
             .setTickWorld(true)
             .useCacheBuffer()
             .setClipContext(ClipContext.Block.VISUAL, ClipContext.Fluid.SOURCE_ONLY);
-        // autoCamera 会把相机对准包围盒中心，这里改为对准控制器，保证结构以控制器为视觉中心
+        // autoCamera 会对准包围盒中心，这里改为对准控制器，让结构以控制器为视觉中心
         scene.setRenderedCore(structure.positions(), null, false);
         scene.setCenter(new Vector3f(0.5F, BASE_Y + 0.5F, 0.5F));
         scene.setZoom(structure.zoom());
@@ -159,7 +155,7 @@ public class MultiblockPreview {
         if (positions.isEmpty()) {
             return null;
         }
-        // 以最大跨度计算取景，相机对准控制器后结构两侧都在画面内
+        // 按最大跨度取景，相机对准控制器后结构两侧都在画面内
         float span = Math.max(maxX, Math.max(maxY, maxZ)) * 2.0F;
         float zoom = span * CAMERA_RANGE;
         return new Structure(

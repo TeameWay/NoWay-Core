@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * 独立的多方块结构信息分类
  *
- * <p>每个机器类型一条记录，只描述结构本身：预览、点击选框与所需方块清单都在同一页里。</p>
+ * <p>每个机器类型一条记录，只描述结构本身；预览、点击选框与所需方块清单在同一页里。</p>
  */
 public class MultiblockInfoRecipeCategory extends ModularUIRecipeCategory<MultiblockInfoRecipeCategory.MultiblockInfo> {
     public static final IRecipeType<MultiblockInfo> RECIPE_TYPE =

@@ -22,7 +22,7 @@ import java.util.Locale;
 /**
  * 服务端命令 {@code /no_way export}
  *
- * <p>需要 OP 4 级权限；读取选区方块并导出多方块定义，文件写入服务端目录下的 {@code exports/}。</p>
+ * <p>需要 OP 4 级权限；读取选区方块并导出多方块定义，文件写入服务端目录的 {@code exports/}。</p>
  */
 public class MultiblockExportCommand {
     private static final DateTimeFormatter FILE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");

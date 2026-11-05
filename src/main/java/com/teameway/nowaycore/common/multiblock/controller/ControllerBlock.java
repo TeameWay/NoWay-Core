@@ -22,8 +22,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * 多方块控制器方块
  *
- * <p>控制器方块实体负责扫描端口、跑配方；方块本身只负责创建实体、注册服务端 ticker，
- * 以及把右键点击转成 LDLib2 的方块界面。</p>
+ * <p>方块本身只负责创建实体、注册服务端 ticker 与打开 LDLib2 界面，扫描端口与跑配方由控制器方块实体承担。</p>
  */
 public class ControllerBlock extends Block implements EntityBlock, BlockUIMenuType.BlockUI {
     public ControllerBlock(Properties properties) {

@@ -12,16 +12,13 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 /**
  * 端口能力注册
  *
- * <p>端口方块实体对外暴露的处理器与控制器内部用的是同一个实例，因此管道与机器共享库存，
- * 控制器不需要再做一层中转。</p>
+ * <p>对外暴露的处理器与控制器内部是同一个实例，两侧共享库存。</p>
  */
 @EventBusSubscriber(modid = NoWayCore.MOD_ID)
 public class ModPortCapabilities {
 
     /**
      * 注册物品/流体/能量能力
-     *
-     * @param event 能力注册事件
      */
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {

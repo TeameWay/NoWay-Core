@@ -14,9 +14,6 @@ public class ModRecipeSerializers {
         NoWayCore.MOD_ID
     );
 
-    /**
-     * 多方块配方序列化器
-     */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MultiblockRecipe>> MULTIBLOCK =
         SERIALIZER.register(
             "multiblock",
