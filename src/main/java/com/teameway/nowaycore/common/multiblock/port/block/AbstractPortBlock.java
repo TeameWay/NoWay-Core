@@ -7,6 +7,7 @@ import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.teameway.nowaycore.common.multiblock.port.MultiblockPort;
 import com.teameway.nowaycore.common.multiblock.port.PortKind;
 import com.teameway.nowaycore.common.multiblock.port.PortTier;
+import dev.anvilcraft.lib.v2.registrum.util.entry.BlockEntityEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -43,7 +44,7 @@ public abstract class AbstractPortBlock extends Block implements EntityBlock, Bl
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return this.createBlockEntity(pos, state);
+        return this.blockEntityEntry().create(pos, state);
     }
 
     @Override
@@ -73,7 +74,7 @@ public abstract class AbstractPortBlock extends Block implements EntityBlock, Bl
     }
 
     /**
-     * 创建对应的方块实体
+     * 对应的方块实体注册条目
      */
-    protected abstract BlockEntity createBlockEntity(BlockPos pos, BlockState state);
+    protected abstract BlockEntityEntry<? extends BlockEntity> blockEntityEntry();
 }

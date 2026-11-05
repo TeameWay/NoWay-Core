@@ -8,6 +8,8 @@ import com.teameway.nowaycore.init.ModRecipeSerializers;
 import com.teameway.nowaycore.init.ModRecipeTypes;
 import com.teameway.nowaycore.init.block.ModBlockEntities;
 import com.teameway.nowaycore.init.block.ModBlocks;
+import com.teameway.nowaycore.init.multiblock.ModMultiblockControllerBlockEntities;
+import com.teameway.nowaycore.init.multiblock.ModMultiblockControllerBlocks;
 import com.teameway.nowaycore.init.multiblock.ModMultiblockControllers;
 import com.teameway.nowaycore.init.multiblock.ModMultiblockMachines;
 import com.teameway.nowaycore.init.multiblock.ModMultiblockPorts;
@@ -34,9 +36,12 @@ public class NoWayCore {
         ModRecipeTypes.register(eventBus);
         ModRecipeSerializers.register(eventBus);
 
+        // multiblock
+        ModMultiblockControllerBlocks.register();
+        ModMultiblockControllerBlockEntities.register();
         ModMultiblockControllers.register();
         ModMultiblockMachines.register();
-        ModMultiblockPorts.register(eventBus);
+        ModMultiblockPorts.register();
         ModMultiblockTypes.register();
 
         ModLevelGen.register(eventBus);

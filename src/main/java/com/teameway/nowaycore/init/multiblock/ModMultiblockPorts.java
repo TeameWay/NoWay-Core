@@ -1,6 +1,5 @@
 package com.teameway.nowaycore.init.multiblock;
 
-import com.teameway.nowaycore.NoWayCore;
 import com.teameway.nowaycore.common.multiblock.port.PortKind;
 import com.teameway.nowaycore.common.multiblock.port.PortRegistry;
 import com.teameway.nowaycore.common.multiblock.port.PortTier;
@@ -12,12 +11,8 @@ import com.teameway.nowaycore.common.multiblock.port.block.entity.ControlPortBlo
 import com.teameway.nowaycore.common.multiblock.port.block.entity.EnergyPortBlockEntity;
 import com.teameway.nowaycore.common.multiblock.port.block.entity.FluidPortBlockEntity;
 import com.teameway.nowaycore.common.multiblock.port.block.entity.ItemPortBlockEntity;
+import dev.anvilcraft.lib.v2.registrum.util.entry.BlockEntityEntry;
 import dev.anvilcraft.lib.v2.registrum.util.entry.BlockEntry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 
@@ -43,37 +38,31 @@ public class ModMultiblockPorts {
         controlPort("parallel_port", PortKind.PARALLEL, PortTier.parallel("basic", 2));
     public static final BlockEntry<ControlPortBlock> THREAD =
         controlPort("thread_port", PortKind.THREAD, PortTier.thread("basic", 1));
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, NoWayCore.MOD_ID);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemPortBlockEntity>> ITEM_PORT_TYPE =
-        BLOCK_ENTITIES.register(
-            "item_port",
-            () -> new BlockEntityType<>(ItemPortBlockEntity::new, ITEM_INPUT.get(), ITEM_OUTPUT.get())
-        );
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidPortBlockEntity>> FLUID_PORT_TYPE =
-        BLOCK_ENTITIES.register(
-            "fluid_port",
-            () -> new BlockEntityType<>(FluidPortBlockEntity::new, FLUID_INPUT.get(), FLUID_OUTPUT.get())
-        );
+    public static final BlockEntityEntry<ItemPortBlockEntity> ITEM_PORT_TYPE = REGISTRUM
+        .blockEntity("item_port", ItemPortBlockEntity::new)
+        .validBlocks(ITEM_INPUT, ITEM_OUTPUT)
+        .register();
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyPortBlockEntity>> ENERGY_PORT_TYPE =
-        BLOCK_ENTITIES.register(
-            "energy_port",
-            () -> new BlockEntityType<>(EnergyPortBlockEntity::new, ENERGY_INPUT.get(), ENERGY_OUTPUT.get())
-        );
+    public static final BlockEntityEntry<FluidPortBlockEntity> FLUID_PORT_TYPE = REGISTRUM
+        .blockEntity("fluid_port", FluidPortBlockEntity::new)
+        .validBlocks(FLUID_INPUT, FLUID_OUTPUT)
+        .register();
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ControlPortBlockEntity>> CONTROL_PORT_TYPE =
-        BLOCK_ENTITIES.register(
-            "control_port",
-            () -> new BlockEntityType<>(ControlPortBlockEntity::new, PARALLEL.get(), THREAD.get())
-        );
+    public static final BlockEntityEntry<EnergyPortBlockEntity> ENERGY_PORT_TYPE = REGISTRUM
+        .blockEntity("energy_port", EnergyPortBlockEntity::new)
+        .validBlocks(ENERGY_INPUT, ENERGY_OUTPUT)
+        .register();
+
+    public static final BlockEntityEntry<ControlPortBlockEntity> CONTROL_PORT_TYPE = REGISTRUM
+        .blockEntity("control_port", ControlPortBlockEntity::new)
+        .validBlocks(PARALLEL, THREAD)
+        .register();
 
     /**
-     * 挂到模组事件总线
+     * 触发类加载，方块与方块实体条目由 {@code REGISTRUM} 统一注册
      */
-    public static void register(IEventBus bus) {
-        BLOCK_ENTITIES.register(bus);
+    public static void register() {
     }
 
     private static BlockEntry<ItemPortBlock> itemPort(String name, PortKind kind, PortTier tier) {

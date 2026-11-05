@@ -4,6 +4,7 @@ import com.lowdragmc.lowdraglib2.gui.factory.BlockUIMenuType;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
+import com.teameway.nowaycore.init.multiblock.ModMultiblockControllerBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +32,7 @@ public class ControllerBlock extends Block implements EntityBlock, BlockUIMenuTy
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return com.teameway.nowaycore.init.block.ModBlockEntities.SIMPLE_CONTROLLER.create(pos, state);
+        return ModMultiblockControllerBlockEntities.SIMPLE_CONTROLLER.create(pos, state);
     }
 
     @Override

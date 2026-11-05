@@ -3,7 +3,8 @@ package com.teameway.nowaycore.common.multiblock.port.block;
 import com.teameway.nowaycore.common.multiblock.port.PortKind;
 import com.teameway.nowaycore.common.multiblock.port.PortTier;
 import com.teameway.nowaycore.common.multiblock.port.block.entity.EnergyPortBlockEntity;
-import net.minecraft.core.BlockPos;
+import com.teameway.nowaycore.init.multiblock.ModMultiblockPorts;
+import dev.anvilcraft.lib.v2.registrum.util.entry.BlockEntityEntry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,8 +22,8 @@ public class EnergyPortBlock extends AbstractPortBlock {
     }
 
     @Override
-    protected BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new EnergyPortBlockEntity(pos, state);
+    protected BlockEntityEntry<? extends BlockEntity> blockEntityEntry() {
+        return ModMultiblockPorts.ENERGY_PORT_TYPE;
     }
 
     @Override

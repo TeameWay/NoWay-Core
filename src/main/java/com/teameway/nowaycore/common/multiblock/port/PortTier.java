@@ -11,7 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @param name           等级名
  * @param slots          物品槽位数量
  * @param fluidCapacity  流体容量（mB）
- * @param energyCapacity 能量容量（FE）
+ * @param energyCapacity 能量容量（FE），可超过 {@link Integer#MAX_VALUE}
  * @param threads        线程增量
  * @param parallels      并行增量
  */
@@ -19,7 +19,7 @@ public record PortTier(
     String name,
     int slots,
     int fluidCapacity,
-    int energyCapacity,
+    long energyCapacity,
     int threads,
     int parallels
 ) {
@@ -27,7 +27,7 @@ public record PortTier(
         Codec.STRING.fieldOf("name").forGetter(PortTier::name),
         Codec.INT.optionalFieldOf("slots", 9).forGetter(PortTier::slots),
         Codec.INT.optionalFieldOf("fluid_capacity", 8000).forGetter(PortTier::fluidCapacity),
-        Codec.INT.optionalFieldOf("energy_capacity", 100_000).forGetter(PortTier::energyCapacity),
+        Codec.LONG.optionalFieldOf("energy_capacity", 100_000L).forGetter(PortTier::energyCapacity),
         Codec.INT.optionalFieldOf("threads", 0).forGetter(PortTier::threads),
         Codec.INT.optionalFieldOf("parallels", 0).forGetter(PortTier::parallels)
     ).apply(instance, PortTier::new));
@@ -61,7 +61,7 @@ public record PortTier(
      * @param capacity 容量（FE）
      * @return 等级
      */
-    public static PortTier energy(String name, int capacity) {
+    public static PortTier energy(String name, long capacity) {
         return new PortTier(name, 0, 0, capacity, 0, 0);
     }
 

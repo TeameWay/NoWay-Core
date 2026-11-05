@@ -4,9 +4,9 @@ import com.teameway.nowaycore.common.multiblock.port.MultiblockPort;
 import com.teameway.nowaycore.common.multiblock.port.PortKind;
 import com.teameway.nowaycore.common.multiblock.port.PortTier;
 import com.teameway.nowaycore.common.multiblock.port.block.AbstractPortBlock;
-import com.teameway.nowaycore.init.multiblock.ModMultiblockPorts;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ControlPortBlockEntity extends BlockEntity implements MultiblockPort {
     private final PortTier tier;
 
-    public ControlPortBlockEntity(BlockPos pos, BlockState state) {
-        super(ModMultiblockPorts.CONTROL_PORT_TYPE.get(), pos, state);
+    public ControlPortBlockEntity(BlockEntityType<ControlPortBlockEntity> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         this.tier = ((AbstractPortBlock) state.getBlock()).tier();
     }
 

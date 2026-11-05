@@ -117,7 +117,7 @@ public class PortUI {
 
     private static Body energyBody(EnergyPort port) {
         EnergyHandler handler = port.energyHandler();
-        int capacity = port.tier().energyCapacity();
+        long capacity = port.tier().energyCapacity();
         EnergyPortBlockEntity synced = port instanceof EnergyPortBlockEntity energy ? energy : null;
 
         ProgressBar bar = new ProgressBar();
@@ -127,7 +127,7 @@ public class PortUI {
                 return 0.0F;
             }
             long stored = synced != null ? synced.energyStored() : handler.getAmountAsLong();
-            return Math.min(1.0F, stored / (float) capacity);
+            return Math.min(1.0F, (float) ((double) stored / (double) capacity));
         }));
         bar.layout(layout -> layout.widthPercent(100));
 

@@ -6,9 +6,14 @@ import net.minecraft.world.item.CreativeModeTab;
 import static com.teameway.nowaycore.NoWayCore.REGISTRUM;
 
 public class ModCreativeTabs {
-    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MAIN_TAB = REGISTRUM
+    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MAIN = REGISTRUM
         .creativeTab("main", ModItems.INFINITE_COLOR_APPLICATOR)
-        .lang(_ -> "itemGroup.noway_core.main", "Noway Core")
+        .lang(_ -> "itemGroup.noway_core.main", "Noway Core - Main")
+        .register();
+
+    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> MULTIBLOCK = REGISTRUM
+        .creativeTab("multiblock", ModItems.INFINITE_COLOR_APPLICATOR)
+        .lang(_ -> "itemGroup.noway_core.multiblock", "Noway Core - Multiblock")
         .register();
 
     public static void register() {

@@ -8,14 +8,14 @@ import com.teameway.nowaycore.common.multiblock.port.EnergyPort;
 import com.teameway.nowaycore.common.multiblock.port.PortKind;
 import com.teameway.nowaycore.common.multiblock.port.PortTier;
 import com.teameway.nowaycore.common.multiblock.port.block.AbstractPortBlock;
-import com.teameway.nowaycore.init.multiblock.ModMultiblockPorts;
+import com.teameway.nowaycore.resource.ingredient.LongEnergyHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
-import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
 
 /**
  * 能量端口方块实体
@@ -27,16 +27,16 @@ public class EnergyPortBlockEntity extends BlockEntity implements EnergyPort, IS
 
     private final FieldManagedStorage syncStorage = new FieldManagedStorage(this);
     private final PortTier tier;
-    private final SimpleEnergyHandler handler;
+    private final LongEnergyHandler handler;
     private int sampleCounter;
 
     @DescSynced
     private long energyStored;
 
-    public EnergyPortBlockEntity(BlockPos pos, BlockState state) {
-        super(ModMultiblockPorts.ENERGY_PORT_TYPE.get(), pos, state);
+    public EnergyPortBlockEntity(BlockEntityType<EnergyPortBlockEntity> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         this.tier = ((AbstractPortBlock) state.getBlock()).tier();
-        this.handler = new SimpleEnergyHandler(this.tier.energyCapacity());
+        this.handler = new LongEnergyHandler(this.tier.energyCapacity());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class EnergyPortBlockEntity extends BlockEntity implements EnergyPort, IS
         return this.energyStored;
     }
 
-    public int energyCapacity() {
+    public long energyCapacity() {
         return this.tier.energyCapacity();
     }
 
