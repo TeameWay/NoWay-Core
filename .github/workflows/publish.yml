@@ -43,4 +43,4 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            build/libs/${{ steps.properties.outputs.mod_name }}-neoforge-*.jar
+            build/libs/*.jar
