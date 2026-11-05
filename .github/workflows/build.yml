@@ -40,6 +40,6 @@ jobs:
         with:
           name: "${{ steps.properties.outputs.mod_name }} ${{ steps.properties.outputs.mod_version }}"
           path: |
-            build/libs/${{ steps.properties.outputs.mod_id }}-${{ steps.properties.outputs.mod_version }}-neoforge-*.jar
+            build/libs/${{ steps.properties.outputs.mod_name }}-neoforge-*.jar
             !build/libs/*-sources.jar
           if-no-files-found: error

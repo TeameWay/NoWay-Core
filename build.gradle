@@ -8,6 +8,7 @@ plugins {
 }
 
 group = maven_group
+version = mod_version
 
 apply from: "$rootDir/gradle/scripts/moddevgradle.gradle"
 apply from: "$rootDir/gradle/scripts/repositories.gradle"

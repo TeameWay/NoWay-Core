@@ -20,6 +20,8 @@ dependencies {
     // AppEng
     implementation(libs.appeng)
 
-    // BnvilMultiblock（组合构建，见 settings.gradle 的 includeBuild）
-    implementation(libs.bnvil.multiblock)
+    // BnvilMultiblock
+    def bnvilJar = fileTree(dir: "$rootDir/libs", include: ['BnvilMultiblock-*.jar'])
+    implementation(bnvilJar)
+    jarJar(bnvilJar)
 }

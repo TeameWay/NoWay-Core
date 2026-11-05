@@ -23,4 +23,4 @@ jar {
     }
 }
 
-base.archivesName = "${mod_id}-${mod_version}-neoforge-${libs.versions.minecraft.get()}"
+base.archivesName = mod_name
